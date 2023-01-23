@@ -2,7 +2,7 @@
 
 - [ ] figure out better cstick keys
 - [x] analog shield
-- [ ] reset on startup
+- [x] reset on startup
 - [ ] mod keys
 - [ ] infinitely many refactors
 - [ ] possibly rewrite in faster language

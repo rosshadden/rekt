@@ -4,14 +4,36 @@ import pynput
 import sys
 import uinput
 
-def getKey(event):
+def get_key(event):
   try:
     return event.char
   except:
     return event.name
 
-def onPress(event):
-  key = getKey(event)
+def reset():
+  device.emit(uinput.BTN_START, False)
+  device.emit(uinput.BTN_A, False)
+  device.emit(uinput.BTN_B, False)
+  device.emit(uinput.BTN_X, False)
+  device.emit(uinput.BTN_Y, False)
+  device.emit(uinput.BTN_THUMBR, False)
+  device.emit(uinput.BTN_TL, False)
+  device.emit(uinput.ABS_RUDDER, 0)
+  device.emit(uinput.ABS_RUDDER, 0)
+  device.emit(uinput.ABS_RUDDER, 0)
+  device.emit(uinput.BTN_TR, False)
+  device.emit(uinput.ABS_GAS, 0)
+  device.emit(uinput.ABS_Y, 128)
+  device.emit(uinput.ABS_Y, 128)
+  device.emit(uinput.ABS_X, 128)
+  device.emit(uinput.ABS_X, 128)
+  device.emit(uinput.ABS_RY, 128)
+  device.emit(uinput.ABS_RY, 128)
+  device.emit(uinput.ABS_RX, 128)
+  device.emit(uinput.ABS_RX, 128)
+
+def on_press(event):
+  key = get_key(event)
 
   if key == "f":
     device.emit(uinput.BTN_START, True)
@@ -58,8 +80,8 @@ def onPress(event):
 
     return True
 
-def onRelease(event):
-  key = getKey(event)
+def on_release(event):
+  key = get_key(event)
 
   if key == "f":
     device.emit(uinput.BTN_START, False)
@@ -135,11 +157,12 @@ device = uinput.Device(
 device.emit(uinput.ABS_X, 128, syn = False)
 
 listener = pynput.keyboard.Listener(
-  on_press = onPress,
-  on_release = onRelease,
+  on_press = on_press,
+  on_release = on_release,
 )
 
 def main():
+  reset()
   listener.start()
   listener.join()
 
