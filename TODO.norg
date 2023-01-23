@@ -1,8 +1,10 @@
 * TODO
 
-- [x] figure out better cstick keys
-- [x] analog shield
-- [x] reset on startup
-- [ ] mod keys
-- [x] infinitely many refactors
-- [ ] possibly rewrite in faster language
+  - [x] figure out better cstick keys
+  - [x] analog shield
+  - [x] reset on startup
+  - [ ] mod keys
+  - [x] infinitely many refactors
+  - [ ] possibly rewrite in faster language
+  - [ ] implement some sort of SOCD handling
+  - [ ] dpad
