@@ -69,13 +69,13 @@ def on_press(event):
   elif key == "u":
     device.emit(uinput.ABS_X, 255)
 
-  elif key == "2":
+  elif key == "up":
     device.emit(uinput.ABS_RY, 0)
-  elif key == "right":
+  elif key == "down":
     device.emit(uinput.ABS_RY, 255)
-  elif key == "1":
+  elif key == "left":
     device.emit(uinput.ABS_RX, 0)
-  elif key == ",":
+  elif key == "right":
     device.emit(uinput.ABS_RX, 255)
 
     return True
@@ -117,13 +117,13 @@ def on_release(event):
   elif key == "u":
     device.emit(uinput.ABS_X, 128)
 
-  elif key == "2":
+  elif key == "up":
     device.emit(uinput.ABS_RY, 128)
-  elif key == "right":
+  elif key == "down":
     device.emit(uinput.ABS_RY, 128)
-  elif key == "1":
+  elif key == "left":
     device.emit(uinput.ABS_RX, 128)
-  elif key == ",":
+  elif key == "right":
     device.emit(uinput.ABS_RX, 128)
 
     return True
