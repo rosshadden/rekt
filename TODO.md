@@ -1,8 +1,0 @@
-# TODO
-
-- figure out better cstick keys
-- analog shield
-- reset on startup
-- mod keys
-- infinitely many refactors
-- possibly rewrite in faster language
