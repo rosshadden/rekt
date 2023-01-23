@@ -29,8 +29,14 @@ def onPress(event):
 
   elif key == "a":
     device.emit(uinput.BTN_TL, True)
+    device.emit(uinput.ABS_RUDDER, 128)
+  elif key == "*":
+    device.emit(uinput.ABS_RUDDER, 32)
+  elif key == "-":
+    device.emit(uinput.ABS_RUDDER, 64)
   elif key == "7":
     device.emit(uinput.BTN_TR, True)
+    device.emit(uinput.ABS_GAS, 128)
 
   elif key == ".":
     device.emit(uinput.ABS_Y, 0)
@@ -71,8 +77,14 @@ def onRelease(event):
 
   elif key == "a":
     device.emit(uinput.BTN_TL, False)
+    device.emit(uinput.ABS_RUDDER, 0)
+  elif key == "*":
+    device.emit(uinput.ABS_RUDDER, 0)
+  elif key == "-":
+    device.emit(uinput.ABS_RUDDER, 0)
   elif key == "7":
     device.emit(uinput.BTN_TR, False)
+    device.emit(uinput.ABS_GAS, 0)
 
   elif key == ".":
     device.emit(uinput.ABS_Y, 128)
@@ -103,6 +115,8 @@ events = (
   uinput.BTN_THUMBR,
   uinput.BTN_TL,
   uinput.BTN_TR,
+  uinput.ABS_RUDDER + (-128, 128, 0, 0),
+  uinput.ABS_GAS + (-128, 128, 0, 0),
   uinput.ABS_X + (0, 255, 0, 0),
   uinput.ABS_Y + (0, 255, 0, 0),
   uinput.ABS_RX + (0, 255, 0, 0),

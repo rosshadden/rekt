@@ -1,7 +1,7 @@
 * TODO
 
 - [ ] figure out better cstick keys
-- [ ] analog shield
+- [x] analog shield
 - [ ] reset on startup
 - [ ] mod keys
 - [ ] infinitely many refactors
