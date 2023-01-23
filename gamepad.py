@@ -44,6 +44,10 @@ class Blocks:
     "D-DOWN": "",
     "D-LEFT": "",
     "D-RIGHT": "",
+
+    # mods
+    "MOD-X": "k",
+    "MOD-Y": "space",
   }
 
   def init(self):
@@ -100,9 +104,9 @@ class Blocks:
     def on_press(event):
       key = get_key(event)
 
+      # face
       if key == self.keymap["START"]:
         self.device.emit(uinput.BTN_START, True)
-
       elif key == self.keymap["A"]:
         self.device.emit(uinput.BTN_A, True)
       elif key == self.keymap["B"]:
@@ -114,7 +118,8 @@ class Blocks:
       elif key == self.keymap["Z"]:
         self.device.emit(uinput.BTN_THUMBR, True)
 
-      elif key == self.keymap["L"]:
+      # triggers
+      if key == self.keymap["L"]:
         self.device.emit(uinput.BTN_TL, True)
         self.device.emit(uinput.ABS_RUDDER, 128)
       elif key == self.keymap["MS"]:
@@ -125,7 +130,8 @@ class Blocks:
         self.device.emit(uinput.BTN_TR, True)
         self.device.emit(uinput.ABS_GAS, 128)
 
-      elif key == self.keymap["UP"]:
+      # stick
+      if key == self.keymap["UP"]:
         self.device.emit(uinput.ABS_Y, 0)
       elif key == self.keymap["DOWN"]:
         self.device.emit(uinput.ABS_Y, 255)
@@ -134,7 +140,8 @@ class Blocks:
       elif key == self.keymap["RIGHT"]:
         self.device.emit(uinput.ABS_X, 255)
 
-      elif key == self.keymap["C-UP"]:
+      # c-stick
+      if key == self.keymap["C-UP"]:
         self.device.emit(uinput.ABS_RY, 0)
       elif key == self.keymap["C-DOWN"]:
         self.device.emit(uinput.ABS_RY, 255)
@@ -149,9 +156,9 @@ class Blocks:
     def on_release(event):
       key = get_key(event)
 
+      # face
       if key == self.keymap["START"]:
         self.device.emit(uinput.BTN_START, False)
-
       elif key == self.keymap["A"]:
         self.device.emit(uinput.BTN_A, False)
       elif key == self.keymap["B"]:
@@ -163,7 +170,8 @@ class Blocks:
       elif key == self.keymap["Z"]:
         self.device.emit(uinput.BTN_THUMBR, False)
 
-      elif key == self.keymap["L"]:
+      # triggers
+      if key == self.keymap["L"]:
         self.device.emit(uinput.BTN_TL, False)
         self.device.emit(uinput.ABS_RUDDER, 0)
       elif key == self.keymap["MS"]:
@@ -174,7 +182,8 @@ class Blocks:
         self.device.emit(uinput.BTN_TR, False)
         self.device.emit(uinput.ABS_GAS, 0)
 
-      elif key == self.keymap["UP"]:
+      # stick
+      if key == self.keymap["UP"]:
         self.device.emit(uinput.ABS_Y, 128)
       elif key == self.keymap["DOWN"]:
         self.device.emit(uinput.ABS_Y, 128)
@@ -183,7 +192,8 @@ class Blocks:
       elif key == self.keymap["RIGHT"]:
         self.device.emit(uinput.ABS_X, 128)
 
-      elif key == self.keymap["C-UP"]:
+      # c-stick
+      if key == self.keymap["C-UP"]:
         self.device.emit(uinput.ABS_RY, 128)
       elif key == self.keymap["C-DOWN"]:
         self.device.emit(uinput.ABS_RY, 128)
