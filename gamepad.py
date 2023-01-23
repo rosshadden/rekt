@@ -52,9 +52,9 @@ def on_press(event):
   elif key == "a":
     device.emit(uinput.BTN_TL, True)
     device.emit(uinput.ABS_RUDDER, 128)
-  elif key == "*":
-    device.emit(uinput.ABS_RUDDER, 32)
   elif key == "+":
+    device.emit(uinput.ABS_RUDDER, 22)
+  elif key == "enter":
     device.emit(uinput.ABS_RUDDER, 64)
   elif key == "7":
     device.emit(uinput.BTN_TR, True)
@@ -100,9 +100,9 @@ def on_release(event):
   elif key == "a":
     device.emit(uinput.BTN_TL, False)
     device.emit(uinput.ABS_RUDDER, 0)
-  elif key == "*":
-    device.emit(uinput.ABS_RUDDER, 0)
   elif key == "+":
+    device.emit(uinput.ABS_RUDDER, 0)
+  elif key == "enter":
     device.emit(uinput.ABS_RUDDER, 0)
   elif key == "7":
     device.emit(uinput.BTN_TR, False)
