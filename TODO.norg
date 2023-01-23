@@ -4,5 +4,5 @@
 - [x] analog shield
 - [x] reset on startup
 - [ ] mod keys
-- [ ] infinitely many refactors
+- [x] infinitely many refactors
 - [ ] possibly rewrite in faster language
