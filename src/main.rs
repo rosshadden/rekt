@@ -1,7 +1,7 @@
 use std::{sync::mpsc::channel, thread};
 
 use rdev::{listen, Event, EventType, Key};
-use uinput::{event::{Controller, controller::GamePad, absolute::{self, Wheel}, Absolute}, Device};
+use uinput::{event::{Controller, controller::GamePad, absolute::{self, Wheel, Position}, Absolute}, Device};
 
 struct Mapping {
 	// face
@@ -57,6 +57,18 @@ impl Rekt {
 			.event(Absolute::Wheel(absolute::Wheel::Gas)).unwrap()
 				.min(-128)
 				.max(128)
+			.event(Absolute::Position(absolute::Position::X)).unwrap()
+				.min(0)
+				.max(255)
+			.event(Absolute::Position(absolute::Position::Y)).unwrap()
+				.min(0)
+				.max(255)
+			.event(Absolute::Position(absolute::Position::RX)).unwrap()
+				.min(0)
+				.max(255)
+			.event(Absolute::Position(absolute::Position::RY)).unwrap()
+				.min(0)
+				.max(255)
 			.create().unwrap()
 		;
 
@@ -154,6 +166,34 @@ impl Rekt {
 				self.device.position(&Wheel::Gas, 128).unwrap();
 			},
 
+			// stick
+			k if k == self.mapping.up => {
+				self.device.position(&Position::Y, 0).unwrap();
+			},
+			k if k == self.mapping.down => {
+				self.device.position(&Position::Y, 255).unwrap();
+			},
+			k if k == self.mapping.left => {
+				self.device.position(&Position::X, 0).unwrap();
+			},
+			k if k == self.mapping.right => {
+				self.device.position(&Position::X, 255).unwrap();
+			},
+
+			// c-stick
+			k if k == self.mapping.c_up => {
+				self.device.position(&Position::RY, 0).unwrap();
+			},
+			k if k == self.mapping.c_down => {
+				self.device.position(&Position::RY, 255).unwrap();
+			},
+			k if k == self.mapping.c_left => {
+				self.device.position(&Position::RX, 0).unwrap();
+			},
+			k if k == self.mapping.c_right => {
+				self.device.position(&Position::RX, 255).unwrap();
+			},
+
 			_ => println!("pressed: {:?}", key),
 		}
 	}
@@ -194,6 +234,34 @@ impl Rekt {
 			k if k == self.mapping.r => {
 				self.device.release(&GamePad::TR).unwrap();
 				self.device.position(&Wheel::Gas, 0).unwrap();
+			},
+
+			// stick
+			k if k == self.mapping.up => {
+				self.device.position(&Position::Y, 128).unwrap();
+			},
+			k if k == self.mapping.down => {
+				self.device.position(&Position::Y, 128).unwrap();
+			},
+			k if k == self.mapping.left => {
+				self.device.position(&Position::X, 128).unwrap();
+			},
+			k if k == self.mapping.right => {
+				self.device.position(&Position::X, 128).unwrap();
+			},
+
+			// c-stick
+			k if k == self.mapping.c_up => {
+				self.device.position(&Position::RY, 128).unwrap();
+			},
+			k if k == self.mapping.c_down => {
+				self.device.position(&Position::RY, 128).unwrap();
+			},
+			k if k == self.mapping.c_left => {
+				self.device.position(&Position::RX, 128).unwrap();
+			},
+			k if k == self.mapping.c_right => {
+				self.device.position(&Position::RX, 128).unwrap();
 			},
 
 			_ => (),
