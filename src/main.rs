@@ -1,6 +1,6 @@
 use std::{sync::mpsc::channel, thread};
 
-use rdev::{listen, Event};
+use rdev::{listen, Event, EventType, Key};
 use uinput::{event::{Controller, controller}, Device};
 
 struct Mapping {
@@ -29,18 +29,35 @@ impl Rekt {
 	}
 
 	fn process(&mut self, event: Event) {
-		println!("process: {:?}", event);
-
-		match event.name {
-			Some(string) => {
-				if string == self.mapping.start {
-					self.device.press(&controller::GamePad::Start).unwrap();
-				}
+		match event.event_type {
+			EventType::KeyPress(key) => {
+				self.press(key);
 			},
-			None => (),
+			EventType::KeyRelease(key) => {
+				self.release(key);
+			},
+			_ => (),
 		}
 
 		self.update();
+	}
+
+	fn press(&mut self, key: Key) {
+		match key {
+			Key::KeyF => {
+				self.device.press(&controller::GamePad::Start).unwrap();
+			}
+			_ => println!("pressed: {:?}", key),
+		}
+	}
+
+	fn release(&mut self, key: Key) {
+		match key {
+			Key::KeyF => {
+				self.device.release(&controller::GamePad::Start).unwrap();
+			}
+			_ => (),
+		}
 	}
 
 	fn update(&mut self) {
@@ -51,6 +68,8 @@ impl Rekt {
 fn main() {
 	let mut rekt = Rekt::new();
 	let (send_chan, recv_chan) = channel();
+
+	println!("starting...");
 
 	let _listener = thread::spawn(move || {
 		listen(move |event| {
@@ -65,6 +84,4 @@ fn main() {
 	for event in recv_chan.iter() {
 		rekt.process(event);
 	}
-
-	println!("starting...");
 }
