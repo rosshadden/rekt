@@ -5,7 +5,7 @@
   - [x] reset on startup
   - [ ] mod keys
   - [x] infinitely many refactors
-  - [ ] possibly rewrite in faster language
+  - [x] possibly rewrite in faster language
   - [ ] implement some sort of SOCD handling
   - [ ] dpad
   - [ ] vet refactoring to have press/release set bitmask values and call an `update` method
