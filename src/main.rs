@@ -1,7 +1,7 @@
 use std::{sync::mpsc::channel, thread};
 
 use rdev::{listen, Event, EventType, Key};
-use uinput::{event::{Controller, controller::{self, GamePad}, absolute::{self, Wheel}, Absolute, self}, Device};
+use uinput::{event::{Controller, controller::GamePad, absolute::{self, Wheel}, Absolute}, Device};
 
 struct Mapping {
 	// face
@@ -51,10 +51,10 @@ impl Rekt {
 		let device = uinput::default().unwrap()
 			.name("rekt").unwrap()
 			.event(Controller::All).unwrap()
-			.event(Absolute::Wheel(Wheel::Rudder)).unwrap()
+			.event(Absolute::Wheel(absolute::Wheel::Brake)).unwrap()
 				.min(-128)
 				.max(128)
-			.event(Absolute::Wheel(Wheel::Gas)).unwrap()
+			.event(Absolute::Wheel(absolute::Wheel::Gas)).unwrap()
 				.min(-128)
 				.max(128)
 			.create().unwrap()
@@ -141,13 +141,13 @@ impl Rekt {
 			// triggers
 			k if k == self.mapping.l => {
 				self.device.press(&GamePad::TL).unwrap();
-				self.device.position(&Wheel::Rudder, 128).unwrap();
+				self.device.position(&Wheel::Brake, 128).unwrap();
 			},
 			k if k == self.mapping.ms => {
-				self.device.position(&Wheel::Rudder, 50).unwrap();
+				self.device.position(&Wheel::Brake, 50).unwrap();
 			},
 			k if k == self.mapping.ls => {
-				self.device.position(&Wheel::Rudder, 22).unwrap();
+				self.device.position(&Wheel::Brake, 22).unwrap();
 			},
 			k if k == self.mapping.r => {
 				self.device.press(&GamePad::TR).unwrap();
@@ -183,13 +183,13 @@ impl Rekt {
 			// triggers
 			k if k == self.mapping.l => {
 				self.device.release(&GamePad::TL).unwrap();
-				self.device.position(&Wheel::Rudder, 0).unwrap();
+				self.device.position(&Wheel::Brake, 0).unwrap();
 			},
 			k if k == self.mapping.ms => {
-				self.device.position(&Wheel::Rudder, 0).unwrap();
+				self.device.position(&Wheel::Brake, 0).unwrap();
 			},
 			k if k == self.mapping.ls => {
-				self.device.position(&Wheel::Rudder, 0).unwrap();
+				self.device.position(&Wheel::Brake, 0).unwrap();
 			},
 			k if k == self.mapping.r => {
 				self.device.release(&GamePad::TR).unwrap();
