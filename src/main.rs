@@ -1,36 +1,70 @@
-extern crate device_query;
+use std::{sync::mpsc::channel, thread};
 
-use device_query::{DeviceEvents, DeviceState, Keycode};
+use rdev::{listen, Event};
+use uinput::{event::{Controller, controller}, Device};
 
-struct Bocks {
-	state: DeviceState,
+struct Mapping {
+	start: String,
 }
 
-impl Bocks {
+struct Rekt {
+	device: Device,
+	mapping: Mapping,
+}
+
+impl Rekt {
 	fn new() -> Self {
-		let state = DeviceState::new();
+		let device = uinput::default().unwrap()
+			.name("rekt").unwrap()
+			.event(Controller::All).unwrap()
+			.create().unwrap()
+		;
 
-		Self { state }
+		Self {
+			device,
+			mapping: Mapping {
+				start: "f".to_string(),
+			},
+		}
 	}
 
-	fn start(&self) {
-		let _guard = self.state.on_key_down(|key| {
-			println!("down: {:#?}", key);
-			// self.process(key);
-		});
+	fn process(&mut self, event: Event) {
+		println!("process: {:?}", event);
 
-		let _guard = self.state.on_key_up(|key| {
-			println!("up: {:#?}", key);
-		});
+		match event.name {
+			Some(string) => {
+				if string == self.mapping.start {
+					self.device.press(&controller::GamePad::Start).unwrap();
+				}
+			},
+			None => (),
+		}
 
-		loop {}
+		self.update();
 	}
 
-	fn process(&self, key: &Keycode) {
+	fn update(&mut self) {
+		self.device.synchronize().unwrap();
 	}
 }
 
 fn main() {
-	let bocks = Bocks::new();
-	bocks.start();
+	let mut rekt = Rekt::new();
+	let (send_chan, recv_chan) = channel();
+
+	let _listener = thread::spawn(move || {
+		listen(move |event| {
+			send_chan
+				.send(event)
+				.unwrap_or_else(|e| println!("Could not send event: {:?}", e));
+		})
+			.expect("Could not listen")
+		;
+	});
+
+	for event in recv_chan.iter() {
+		rekt.process(event);
+	}
+
+	println!("starting...");
 }
