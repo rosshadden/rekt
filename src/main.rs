@@ -109,16 +109,10 @@ impl Rekt {
 
 	fn handle(&mut self, event: rdev::Event) {
 		match event.event_type {
-			EventType::KeyPress(key) => {
-				self.press(key);
-			},
-			EventType::KeyRelease(key) => {
-				self.release(key);
-			},
+			EventType::KeyPress(key) => self.press(key),
+			EventType::KeyRelease(key) => self.release(key),
 			_ => (),
 		}
-
-		self.process();
 	}
 
 	fn press(&mut self, key: Key) {
@@ -293,7 +287,11 @@ fn main() {
 		;
 	});
 
-	for event in recv_chan.iter() {
-		rekt.handle(event);
+	loop {
+		for event in recv_chan.try_iter() {
+			rekt.handle(event);
+		}
+
+		rekt.process();
 	}
 }
