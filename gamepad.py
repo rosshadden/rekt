@@ -10,7 +10,7 @@ def get_key(event):
   except:
     return event.name
 
-class Blocks:
+class Rekt:
 
   keymap = {
     # face
@@ -70,7 +70,7 @@ class Blocks:
 
     self.device = uinput.Device(
       events,
-      name = "bocks",
+      name = "rekt",
       vendor = 0x045e,
       product = 0x028e,
       version = 0x110,
@@ -214,7 +214,7 @@ class Blocks:
     listener.join()
 
 def main():
-  blocks = Blocks()
+  blocks = Rekt()
   blocks.init()
   blocks.start()
 
