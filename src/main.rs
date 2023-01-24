@@ -10,6 +10,7 @@ struct Rekt {
 	input: controller::InputMap,
 	output: controller::OutputMap,
 	state: controller::State,
+	state_cache: controller::State,
 }
 
 impl Rekt {
@@ -104,6 +105,7 @@ impl Rekt {
 			},
 
 			state: controller::State::new(),
+			state_cache: controller::State::new(),
 		}
 	}
 
@@ -210,10 +212,12 @@ impl Rekt {
 			},
 			k if k == self.input.left => {
 				self.state.left = false;
+				self.state_cache.left = false;
 				self.state.horizontal = 128;
 			},
 			k if k == self.input.right => {
 				self.state.right = false;
+				self.state_cache.right = false;
 				self.state.horizontal = 128;
 			},
 
@@ -255,6 +259,25 @@ impl Rekt {
 		self.device.send(self.output.ra, self.state.ra.into()).unwrap();
 
 		// stick
+		if self.state.left && self.state.right {
+			if self.state_cache.left {
+				self.state.horizontal = 255;
+			} else if self.state_cache.right {
+				self.state.horizontal = 0;
+			} else {
+				self.state.horizontal = 128;
+				// unreachable!("they said it couldn't be done");
+			}
+		} else if self.state.left {
+			self.state_cache.left = true;
+			self.state.horizontal = 0;
+		} else if self.state.right {
+			self.state_cache.right = true;
+			self.state.horizontal = 255;
+		} else {
+			self.state_cache.left = false;
+			self.state_cache.right = false;
+		}
 		self.device.send(self.output.horizontal, self.state.horizontal.into()).unwrap();
 		self.device.send(self.output.vertical, self.state.vertical.into()).unwrap();
 

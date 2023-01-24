@@ -63,6 +63,7 @@ pub struct OutputMap {
 	pub d_right: GamePad,
 }
 
+#[derive(Clone, Copy)]
 pub struct State {
 	// face
 	pub start: bool,
