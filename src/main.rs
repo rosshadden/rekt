@@ -128,6 +128,29 @@ impl Rekt {
 		self.update();
 	}
 
+	fn reset(&mut self) {
+		self.device.release(&GamePad::Start).unwrap();
+		self.device.release(&GamePad::A).unwrap();
+		self.device.release(&GamePad::B).unwrap();
+		self.device.release(&GamePad::X).unwrap();
+		self.device.release(&GamePad::Y).unwrap();
+		self.device.release(&GamePad::ThumbR).unwrap();
+		self.device.release(&GamePad::TL).unwrap();
+		self.device.position(&Wheel::Rudder, 0).unwrap();
+		self.device.position(&Wheel::Rudder, 0).unwrap();
+		self.device.position(&Wheel::Rudder, 0).unwrap();
+		self.device.release(&GamePad::TR).unwrap();
+		self.device.position(&Wheel::Throttle, 0).unwrap();
+		self.device.position(&Position::Y, 128).unwrap();
+		self.device.position(&Position::Y, 128).unwrap();
+		self.device.position(&Position::X, 128).unwrap();
+		self.device.position(&Position::X, 128).unwrap();
+		self.device.position(&Position::RY, 128).unwrap();
+		self.device.position(&Position::RY, 128).unwrap();
+		self.device.position(&Position::RX, 128).unwrap();
+		self.device.position(&Position::RX, 128).unwrap();
+	}
+
 	fn press(&mut self, key: Key) {
 		match key {
 			// face
@@ -194,7 +217,7 @@ impl Rekt {
 				self.device.position(&Position::RX, 255).unwrap();
 			},
 
-			_ => println!("pressed: {:?}", key),
+			_ => (),
 		}
 	}
 
@@ -278,6 +301,7 @@ fn main() {
 	let (send_chan, recv_chan) = channel();
 
 	println!("starting...");
+	rekt.reset();
 
 	let _listener = thread::spawn(move || {
 		listen(move |event| {
