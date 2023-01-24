@@ -3,76 +3,12 @@ use std::{sync::mpsc::channel, thread};
 use rdev::{listen, EventType, Key};
 use uinput::{event::{Controller, controller::GamePad, absolute::{self, Wheel, Position}, Absolute}, Device};
 
-struct InputMap {
-	// face
-	start: Key,
-	a: Key,
-	b: Key,
-	x: Key,
-	y: Key,
-	z: Key,
-
-	// triggers
-	l: Key,
-	r: Key,
-	lm: Key,
-	ls: Key,
-
-	// stick
-	up: Key,
-	down: Key,
-	left: Key,
-	right: Key,
-
-	// c-stick
-	c_up: Key,
-	c_down: Key,
-	c_left: Key,
-	c_right: Key,
-
-	// mods
-	mod_x: Key,
-	mod_y: Key,
-}
-
-struct OutputMap {
-	// face
-	start: GamePad,
-	a: GamePad,
-	b: GamePad,
-	x: GamePad,
-	y: GamePad,
-	z: GamePad,
-
-	// triggers
-	l: GamePad,
-	r: GamePad,
-	la: Wheel,
-	ra: Wheel,
-
-	// stick
-	up: Position,
-	down: Position,
-	left: Position,
-	right: Position,
-
-	// c-stick
-	c_up: Position,
-	c_down: Position,
-	c_left: Position,
-	c_right: Position,
-
-	// dpad
-	d_up: GamePad,
-	d_down: GamePad,
-	d_left: GamePad,
-	d_right: GamePad,
-}
+mod controller;
 
 struct Rekt {
 	device: Device,
-	input: InputMap,
-	output: OutputMap,
+	input: controller::InputMap,
+	output: controller::OutputMap,
 }
 
 impl Rekt {
@@ -104,7 +40,7 @@ impl Rekt {
 		Self {
 			device,
 
-			input: InputMap {
+			input: controller::InputMap {
 				// face
 				start: Key::KeyF,
 				a: Key::Kp0,
@@ -136,7 +72,7 @@ impl Rekt {
 				mod_y: Key::Space,
 			},
 
-			output: OutputMap {
+			output: controller::OutputMap {
 				// face
 				start: GamePad::Start.into(),
 				a: GamePad::A.into(),
