@@ -49,16 +49,12 @@ pub struct OutputMap {
 	pub ra: Wheel,
 
 	// stick
-	pub up: Position,
-	pub down: Position,
-	pub left: Position,
-	pub right: Position,
+	pub horizontal: Position,
+	pub vertical: Position,
 
 	// c-stick
-	pub c_up: Position,
-	pub c_down: Position,
-	pub c_left: Position,
-	pub c_right: Position,
+	pub c_horizontal: Position,
+	pub c_vertical: Position,
 
 	// dpad
 	pub d_up: GamePad,

@@ -9,6 +9,6 @@
   - [ ] implement some sort of SOCD handling
   - [ ] dpad
   - [ ] refactor press/release to modify one state and call an `update` method that does the work
-  - [ ] combine output directions into axes
+  - [x] combine output directions into axes
   - [ ] make press/release more dynamic, relying on event type match guards for logic/values
   - [ ] make device init dynamic

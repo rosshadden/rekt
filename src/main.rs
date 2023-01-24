@@ -88,16 +88,12 @@ impl Rekt {
 				ra: Wheel::Throttle,
 
 				// stick
-				up: Position::Y,
-				down: Position::Y,
-				left: Position::X,
-				right: Position::X,
+				horizontal: Position::X,
+				vertical: Position::Y,
 
 				// c-stick
-				c_up: Position::RY,
-				c_down: Position::RY,
-				c_left: Position::RX,
-				c_right: Position::RX,
+				c_horizontal: Position::RX,
+				c_vertical: Position::RY,
 
 				// dpad
 				d_up: GamePad::North,
@@ -133,10 +129,10 @@ impl Rekt {
 		self.device.release(&self.output.r).unwrap();
 		self.device.position(&self.output.la, 0).unwrap();
 		self.device.position(&self.output.ra, 0).unwrap();
-		self.device.position(&self.output.up, 128).unwrap();
-		self.device.position(&self.output.left, 128).unwrap();
-		self.device.position(&self.output.c_up, 128).unwrap();
-		self.device.position(&self.output.c_left, 128).unwrap();
+		self.device.position(&self.output.horizontal, 128).unwrap();
+		self.device.position(&self.output.vertical, 128).unwrap();
+		self.device.position(&self.output.c_horizontal, 128).unwrap();
+		self.device.position(&self.output.c_vertical, 128).unwrap();
 	}
 
 	fn press(&mut self, key: Key) {
@@ -179,30 +175,30 @@ impl Rekt {
 
 			// stick
 			k if k == self.input.up => {
-				self.device.position(&self.output.up, 0).unwrap();
+				self.device.position(&self.output.vertical, 0).unwrap();
 			},
 			k if k == self.input.down => {
-				self.device.position(&self.output.down, 255).unwrap();
+				self.device.position(&self.output.vertical, 255).unwrap();
 			},
 			k if k == self.input.left => {
-				self.device.position(&self.output.left, 0).unwrap();
+				self.device.position(&self.output.horizontal, 0).unwrap();
 			},
 			k if k == self.input.right => {
-				self.device.position(&self.output.right, 255).unwrap();
+				self.device.position(&self.output.horizontal, 255).unwrap();
 			},
 
 			// c-stick
 			k if k == self.input.c_up => {
-				self.device.position(&self.output.c_up, 0).unwrap();
+				self.device.position(&self.output.c_vertical, 0).unwrap();
 			},
 			k if k == self.input.c_down => {
-				self.device.position(&self.output.c_down, 255).unwrap();
+				self.device.position(&self.output.c_vertical, 255).unwrap();
 			},
 			k if k == self.input.c_left => {
-				self.device.position(&self.output.c_left, 0).unwrap();
+				self.device.position(&self.output.c_horizontal, 0).unwrap();
 			},
 			k if k == self.input.c_right => {
-				self.device.position(&self.output.c_right, 255).unwrap();
+				self.device.position(&self.output.c_horizontal, 255).unwrap();
 			},
 
 			_ => (),
@@ -249,30 +245,30 @@ impl Rekt {
 
 			// stick
 			k if k == self.input.up => {
-				self.device.position(&self.output.up, 128).unwrap();
+				self.device.position(&self.output.vertical, 128).unwrap();
 			},
 			k if k == self.input.down => {
-				self.device.position(&self.output.down, 128).unwrap();
+				self.device.position(&self.output.vertical, 128).unwrap();
 			},
 			k if k == self.input.left => {
-				self.device.position(&self.output.left, 128).unwrap();
+				self.device.position(&self.output.horizontal, 128).unwrap();
 			},
 			k if k == self.input.right => {
-				self.device.position(&self.output.right, 128).unwrap();
+				self.device.position(&self.output.horizontal, 128).unwrap();
 			},
 
 			// c-stick
 			k if k == self.input.c_up => {
-				self.device.position(&self.output.c_up, 128).unwrap();
+				self.device.position(&self.output.c_vertical, 128).unwrap();
 			},
 			k if k == self.input.c_down => {
-				self.device.position(&self.output.c_down, 128).unwrap();
+				self.device.position(&self.output.c_vertical, 128).unwrap();
 			},
 			k if k == self.input.c_left => {
-				self.device.position(&self.output.c_left, 128).unwrap();
+				self.device.position(&self.output.c_horizontal, 128).unwrap();
 			},
 			k if k == self.input.c_right => {
-				self.device.position(&self.output.c_right, 128).unwrap();
+				self.device.position(&self.output.c_horizontal, 128).unwrap();
 			},
 
 			_ => (),
