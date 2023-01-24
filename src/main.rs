@@ -121,23 +121,6 @@ impl Rekt {
 		self.process();
 	}
 
-	fn reset(&mut self) {
-		self.device.release(&self.output.start).unwrap();
-		self.device.release(&self.output.a).unwrap();
-		self.device.release(&self.output.b).unwrap();
-		self.device.release(&self.output.x).unwrap();
-		self.device.release(&self.output.y).unwrap();
-		self.device.release(&self.output.z).unwrap();
-		self.device.release(&self.output.l).unwrap();
-		self.device.release(&self.output.r).unwrap();
-		self.device.position(&self.output.la, 0).unwrap();
-		self.device.position(&self.output.ra, 0).unwrap();
-		self.device.position(&self.output.horizontal, 128).unwrap();
-		self.device.position(&self.output.vertical, 128).unwrap();
-		self.device.position(&self.output.c_horizontal, 128).unwrap();
-		self.device.position(&self.output.c_vertical, 128).unwrap();
-	}
-
 	fn press(&mut self, key: Key) {
 		match key {
 			// face
@@ -298,7 +281,7 @@ fn main() {
 	let (send_chan, recv_chan) = channel();
 
 	println!("starting...");
-	rekt.reset();
+	rekt.process();
 
 	let _listener = thread::spawn(move || {
 		listen(move |event| {
