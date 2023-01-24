@@ -9,6 +9,7 @@ struct Rekt {
 	device: Device,
 	input: controller::InputMap,
 	output: controller::OutputMap,
+	state: controller::State,
 }
 
 impl Rekt {
@@ -101,10 +102,12 @@ impl Rekt {
 				d_left: GamePad::North,
 				d_right: GamePad::North,
 			},
+
+			state: controller::State::new(),
 		}
 	}
 
-	fn process(&mut self, event: rdev::Event) {
+	fn handle(&mut self, event: rdev::Event) {
 		match event.event_type {
 			EventType::KeyPress(key) => {
 				self.press(key);
@@ -115,7 +118,7 @@ impl Rekt {
 			_ => (),
 		}
 
-		self.update();
+		self.process();
 	}
 
 	fn reset(&mut self) {
@@ -138,67 +141,59 @@ impl Rekt {
 	fn press(&mut self, key: Key) {
 		match key {
 			// face
-			k if k == self.input.start => {
-				self.device.press(&self.output.start).unwrap();
-			},
-			k if k == self.input.a => {
-				self.device.press(&self.output.a).unwrap();
-			},
-			k if k == self.input.b => {
-				self.device.press(&self.output.b).unwrap();
-			},
-			k if k == self.input.x => {
-				self.device.press(&self.output.x).unwrap();
-			},
-			k if k == self.input.y => {
-				self.device.press(&self.output.y).unwrap();
-			},
-			k if k == self.input.z => {
-				self.device.press(&self.output.z).unwrap();
-			},
+			k if k == self.input.start => self.state.start = true,
+			k if k == self.input.a => self.state.a = true,
+			k if k == self.input.b => self.state.b = true,
+			k if k == self.input.x => self.state.x = true,
+			k if k == self.input.y => self.state.y = true,
+			k if k == self.input.z => self.state.z = true,
 
 			// triggers
 			k if k == self.input.l => {
-				self.device.press(&self.output.l).unwrap();
-				self.device.position(&self.output.la, 128).unwrap();
-			},
-			k if k == self.input.lm => {
-				self.device.position(&self.output.la, 50).unwrap();
-			},
-			k if k == self.input.ls => {
-				self.device.position(&self.output.la, 22).unwrap();
+				self.state.l = true;
+				self.state.la = 128;
 			},
 			k if k == self.input.r => {
-				self.device.press(&self.output.r).unwrap();
-				self.device.position(&self.output.ra, 128).unwrap();
+				self.state.r = true;
+				self.state.ra = 128;
 			},
+			k if k == self.input.lm => self.state.la = 50,
+			k if k == self.input.ls => self.state.la = 22,
 
 			// stick
 			k if k == self.input.up => {
-				self.device.position(&self.output.vertical, 0).unwrap();
+				self.state.up = true;
+				self.state.vertical = 0;
 			},
 			k if k == self.input.down => {
-				self.device.position(&self.output.vertical, 255).unwrap();
+				self.state.down = true;
+				self.state.vertical = 255;
 			},
 			k if k == self.input.left => {
-				self.device.position(&self.output.horizontal, 0).unwrap();
+				self.state.left = true;
+				self.state.horizontal = 0;
 			},
 			k if k == self.input.right => {
-				self.device.position(&self.output.horizontal, 255).unwrap();
+				self.state.right = true;
+				self.state.horizontal = 255;
 			},
 
 			// c-stick
 			k if k == self.input.c_up => {
-				self.device.position(&self.output.c_vertical, 0).unwrap();
+				self.state.c_up = true;
+				self.state.c_vertical = 0;
 			},
 			k if k == self.input.c_down => {
-				self.device.position(&self.output.c_vertical, 255).unwrap();
+				self.state.c_down = true;
+				self.state.c_vertical = 255;
 			},
 			k if k == self.input.c_left => {
-				self.device.position(&self.output.c_horizontal, 0).unwrap();
+				self.state.c_left = true;
+				self.state.c_horizontal = 0;
 			},
 			k if k == self.input.c_right => {
-				self.device.position(&self.output.c_horizontal, 255).unwrap();
+				self.state.c_right = true;
+				self.state.c_horizontal = 255;
 			},
 
 			_ => (),
@@ -208,71 +203,89 @@ impl Rekt {
 	fn release(&mut self, key: Key) {
 		match key {
 			// face
-			k if k == self.input.start => {
-				self.device.release(&self.output.start).unwrap();
-			},
-			k if k == self.input.a => {
-				self.device.release(&self.output.a).unwrap();
-			},
-			k if k == self.input.b => {
-				self.device.release(&self.output.b).unwrap();
-			},
-			k if k == self.input.x => {
-				self.device.release(&self.output.x).unwrap();
-			},
-			k if k == self.input.y => {
-				self.device.release(&self.output.y).unwrap();
-			},
-			k if k == self.input.z => {
-				self.device.release(&self.output.z).unwrap();
-			},
+			k if k == self.input.start => self.state.start = false,
+			k if k == self.input.a => self.state.a = false,
+			k if k == self.input.b => self.state.b = false,
+			k if k == self.input.x => self.state.x = false,
+			k if k == self.input.y => self.state.y = false,
+			k if k == self.input.z => self.state.z = false,
 
 			// triggers
 			k if k == self.input.l => {
-				self.device.release(&self.output.l).unwrap();
-				self.device.position(&self.output.la, 0).unwrap();
-			},
-			k if k == self.input.lm => {
-				self.device.position(&self.output.la, 0).unwrap();
-			},
-			k if k == self.input.ls => {
-				self.device.position(&self.output.la, 0).unwrap();
+				self.state.l = false;
+				self.state.la = 0;
 			},
 			k if k == self.input.r => {
-				self.device.release(&self.output.r).unwrap();
-				self.device.position(&self.output.ra, 0).unwrap();
+				self.state.r = false;
+				self.state.ra = 0;
 			},
+			k if k == self.input.lm => self.state.la = 0,
+			k if k == self.input.ls => self.state.la = 0,
 
 			// stick
 			k if k == self.input.up => {
-				self.device.position(&self.output.vertical, 128).unwrap();
+				self.state.up = false;
+				self.state.vertical = 128;
 			},
 			k if k == self.input.down => {
-				self.device.position(&self.output.vertical, 128).unwrap();
+				self.state.down = false;
+				self.state.vertical = 128;
 			},
 			k if k == self.input.left => {
-				self.device.position(&self.output.horizontal, 128).unwrap();
+				self.state.left = false;
+				self.state.horizontal = 128;
 			},
 			k if k == self.input.right => {
-				self.device.position(&self.output.horizontal, 128).unwrap();
+				self.state.right = false;
+				self.state.horizontal = 128;
 			},
 
 			// c-stick
 			k if k == self.input.c_up => {
-				self.device.position(&self.output.c_vertical, 128).unwrap();
+				self.state.c_up = false;
+				self.state.c_vertical = 128;
 			},
 			k if k == self.input.c_down => {
-				self.device.position(&self.output.c_vertical, 128).unwrap();
+				self.state.c_down = false;
+				self.state.c_vertical = 128;
 			},
 			k if k == self.input.c_left => {
-				self.device.position(&self.output.c_horizontal, 128).unwrap();
+				self.state.c_left = false;
+				self.state.c_horizontal = 128;
 			},
 			k if k == self.input.c_right => {
-				self.device.position(&self.output.c_horizontal, 128).unwrap();
+				self.state.c_right = false;
+				self.state.c_horizontal = 128;
 			},
 
 			_ => (),
 		}
+	}
+
+	fn process(&mut self) {
+		// face
+		self.device.send(self.output.start, self.state.start.into()).unwrap();
+		self.device.send(self.output.a, self.state.a.into()).unwrap();
+		self.device.send(self.output.b, self.state.b.into()).unwrap();
+		self.device.send(self.output.x, self.state.x.into()).unwrap();
+		self.device.send(self.output.y, self.state.y.into()).unwrap();
+		self.device.send(self.output.z, self.state.z.into()).unwrap();
+
+		// triggers
+		self.device.send(self.output.l, self.state.l.into()).unwrap();
+		self.device.send(self.output.r, self.state.r.into()).unwrap();
+		self.device.send(self.output.la, self.state.la.into()).unwrap();
+		self.device.send(self.output.ra, self.state.ra.into()).unwrap();
+
+		// stick
+		self.device.send(self.output.horizontal, self.state.horizontal.into()).unwrap();
+		self.device.send(self.output.vertical, self.state.vertical.into()).unwrap();
+
+		// c-stick
+		self.device.send(self.output.c_horizontal, self.state.c_horizontal.into()).unwrap();
+		self.device.send(self.output.c_vertical, self.state.c_vertical.into()).unwrap();
+
+		self.update();
 	}
 
 	fn update(&mut self) {
@@ -298,6 +311,6 @@ fn main() {
 	});
 
 	for event in recv_chan.iter() {
-		rekt.process(event);
+		rekt.handle(event);
 	}
 }
