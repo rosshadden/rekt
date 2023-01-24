@@ -74,36 +74,36 @@ impl Rekt {
 
 			output: controller::OutputMap {
 				// face
-				start: GamePad::Start.into(),
-				a: GamePad::A.into(),
-				b: GamePad::B.into(),
-				x: GamePad::X.into(),
-				y: GamePad::Y.into(),
-				z: GamePad::ThumbR.into(),
+				start: GamePad::Start,
+				a: GamePad::A,
+				b: GamePad::B,
+				x: GamePad::X,
+				y: GamePad::Y,
+				z: GamePad::ThumbR,
 
 				// triggers
-				l: GamePad::TL.into(),
-				r: GamePad::TR.into(),
-				la: Wheel::Rudder.into(),
-				ra: Wheel::Throttle.into(),
+				l: GamePad::TL,
+				r: GamePad::TR,
+				la: Wheel::Rudder,
+				ra: Wheel::Throttle,
 
 				// stick
-				up: Position::Y.into(),
-				down: Position::Y.into(),
-				left: Position::X.into(),
-				right: Position::X.into(),
+				up: Position::Y,
+				down: Position::Y,
+				left: Position::X,
+				right: Position::X,
 
 				// c-stick
-				c_up: Position::RY.into(),
-				c_down: Position::RY.into(),
-				c_left: Position::RX.into(),
-				c_right: Position::RX.into(),
+				c_up: Position::RY,
+				c_down: Position::RY,
+				c_left: Position::RX,
+				c_right: Position::RX,
 
 				// dpad
-				d_up: GamePad::North.into(),
-				d_down: GamePad::North.into(),
-				d_left: GamePad::North.into(),
-				d_right: GamePad::North.into(),
+				d_up: GamePad::North,
+				d_down: GamePad::North,
+				d_left: GamePad::North,
+				d_right: GamePad::North,
 			},
 		}
 	}
@@ -219,7 +219,7 @@ impl Rekt {
 				self.device.release(&self.output.a).unwrap();
 			},
 			k if k == self.input.b => {
-				self.device.release(&self.output.y).unwrap();
+				self.device.release(&self.output.b).unwrap();
 			},
 			k if k == self.input.x => {
 				self.device.release(&self.output.x).unwrap();
@@ -244,7 +244,7 @@ impl Rekt {
 			},
 			k if k == self.input.r => {
 				self.device.release(&self.output.r).unwrap();
-				self.device.position(&self.output.la, 0).unwrap();
+				self.device.position(&self.output.ra, 0).unwrap();
 			},
 
 			// stick
