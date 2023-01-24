@@ -1,9 +1,9 @@
 use std::{sync::mpsc::channel, thread};
 
-use rdev::{listen, Event, EventType, Key};
+use rdev::{listen, EventType, Key};
 use uinput::{event::{Controller, controller::GamePad, absolute::{self, Wheel, Position}, Absolute}, Device};
 
-struct Mapping {
+struct InputMap {
 	// face
 	start: Key,
 	a: Key,
@@ -15,7 +15,7 @@ struct Mapping {
 	// triggers
 	l: Key,
 	r: Key,
-	ms: Key,
+	lm: Key,
 	ls: Key,
 
 	// stick
@@ -30,20 +30,49 @@ struct Mapping {
 	c_left: Key,
 	c_right: Key,
 
-	// // dpad
-	// d_up: Key,
-	// d_down: Key,
-	// d_left: Key,
-	// d_right: Key,
-
 	// mods
 	mod_x: Key,
 	mod_y: Key,
 }
 
+struct OutputMap {
+	// face
+	start: GamePad,
+	a: GamePad,
+	b: GamePad,
+	x: GamePad,
+	y: GamePad,
+	z: GamePad,
+
+	// triggers
+	l: GamePad,
+	r: GamePad,
+	la: Wheel,
+	ra: Wheel,
+
+	// stick
+	up: Position,
+	down: Position,
+	left: Position,
+	right: Position,
+
+	// c-stick
+	c_up: Position,
+	c_down: Position,
+	c_left: Position,
+	c_right: Position,
+
+	// dpad
+	d_up: GamePad,
+	d_down: GamePad,
+	d_left: GamePad,
+	d_right: GamePad,
+}
+
 struct Rekt {
 	device: Device,
-	mapping: Mapping,
+	input: InputMap,
+	output: OutputMap,
 }
 
 impl Rekt {
@@ -74,7 +103,8 @@ impl Rekt {
 
 		Self {
 			device,
-			mapping: Mapping {
+
+			input: InputMap {
 				// face
 				start: Key::KeyF,
 				a: Key::Kp0,
@@ -86,7 +116,7 @@ impl Rekt {
 				// triggers
 				l: Key::KeyA,
 				r: Key::Kp7,
-				ms: Key::KpReturn,
+				lm: Key::KpReturn,
 				ls: Key::KpPlus,
 
 				// stick
@@ -101,20 +131,48 @@ impl Rekt {
 				c_left: Key::LeftArrow,
 				c_right: Key::RightArrow,
 
-				// // dpad
-				// d_up: "",
-				// d_down: "",
-				// d_left: "",
-				// d_right: "",
-
 				// mods
 				mod_x: Key::KeyK,
 				mod_y: Key::Space,
 			},
+
+			output: OutputMap {
+				// face
+				start: GamePad::Start.into(),
+				a: GamePad::A.into(),
+				b: GamePad::B.into(),
+				x: GamePad::X.into(),
+				y: GamePad::Y.into(),
+				z: GamePad::ThumbR.into(),
+
+				// triggers
+				l: GamePad::TL.into(),
+				r: GamePad::TR.into(),
+				la: Wheel::Rudder.into(),
+				ra: Wheel::Throttle.into(),
+
+				// stick
+				up: Position::Y.into(),
+				down: Position::Y.into(),
+				left: Position::X.into(),
+				right: Position::X.into(),
+
+				// c-stick
+				c_up: Position::RY.into(),
+				c_down: Position::RY.into(),
+				c_left: Position::RX.into(),
+				c_right: Position::RX.into(),
+
+				// dpad
+				d_up: GamePad::North.into(),
+				d_down: GamePad::North.into(),
+				d_left: GamePad::North.into(),
+				d_right: GamePad::North.into(),
+			},
 		}
 	}
 
-	fn process(&mut self, event: Event) {
+	fn process(&mut self, event: rdev::Event) {
 		match event.event_type {
 			EventType::KeyPress(key) => {
 				self.press(key);
@@ -129,92 +187,86 @@ impl Rekt {
 	}
 
 	fn reset(&mut self) {
-		self.device.release(&GamePad::Start).unwrap();
-		self.device.release(&GamePad::A).unwrap();
-		self.device.release(&GamePad::B).unwrap();
-		self.device.release(&GamePad::X).unwrap();
-		self.device.release(&GamePad::Y).unwrap();
-		self.device.release(&GamePad::ThumbR).unwrap();
-		self.device.release(&GamePad::TL).unwrap();
-		self.device.position(&Wheel::Rudder, 0).unwrap();
-		self.device.position(&Wheel::Rudder, 0).unwrap();
-		self.device.position(&Wheel::Rudder, 0).unwrap();
-		self.device.release(&GamePad::TR).unwrap();
-		self.device.position(&Wheel::Throttle, 0).unwrap();
-		self.device.position(&Position::Y, 128).unwrap();
-		self.device.position(&Position::Y, 128).unwrap();
-		self.device.position(&Position::X, 128).unwrap();
-		self.device.position(&Position::X, 128).unwrap();
-		self.device.position(&Position::RY, 128).unwrap();
-		self.device.position(&Position::RY, 128).unwrap();
-		self.device.position(&Position::RX, 128).unwrap();
-		self.device.position(&Position::RX, 128).unwrap();
+		self.device.release(&self.output.start).unwrap();
+		self.device.release(&self.output.a).unwrap();
+		self.device.release(&self.output.b).unwrap();
+		self.device.release(&self.output.x).unwrap();
+		self.device.release(&self.output.y).unwrap();
+		self.device.release(&self.output.z).unwrap();
+		self.device.release(&self.output.l).unwrap();
+		self.device.release(&self.output.r).unwrap();
+		self.device.position(&self.output.la, 0).unwrap();
+		self.device.position(&self.output.ra, 0).unwrap();
+		self.device.position(&self.output.up, 128).unwrap();
+		self.device.position(&self.output.left, 128).unwrap();
+		self.device.position(&self.output.c_up, 128).unwrap();
+		self.device.position(&self.output.c_left, 128).unwrap();
 	}
 
 	fn press(&mut self, key: Key) {
 		match key {
 			// face
-			k if k == self.mapping.start => {
-				self.device.press(&GamePad::Start).unwrap();
+			k if k == self.input.start => {
+				self.device.press(&self.output.start).unwrap();
 			},
-			k if k == self.mapping.a => {
-				self.device.press(&GamePad::A).unwrap();
+			k if k == self.input.a => {
+				self.device.press(&self.output.a).unwrap();
 			},
-			k if k == self.mapping.b => {
-				self.device.press(&GamePad::B).unwrap();
+			k if k == self.input.b => {
+				self.device.press(&self.output.b).unwrap();
 			},
-			k if k == self.mapping.x => {
-				self.device.press(&GamePad::X).unwrap();
+			k if k == self.input.x => {
+				self.device.press(&self.output.x).unwrap();
 			},
-			k if k == self.mapping.y => {
-				self.device.press(&GamePad::Y).unwrap();
+			k if k == self.input.y => {
+				self.device.press(&self.output.y).unwrap();
 			},
-			k if k == self.mapping.z => {
-				self.device.press(&GamePad::ThumbR).unwrap();
+			k if k == self.input.z => {
+				self.device.press(&self.output.z).unwrap();
 			},
 
 			// triggers
-			k if k == self.mapping.l => {
-				self.device.press(&GamePad::TL).unwrap();
-				self.device.position(&Wheel::Rudder, 128).unwrap();
+			k if k == self.input.l => {
+				self.device.press(&self.output.l).unwrap();
+				self.device.position(&self.output.la, 128).unwrap();
 			},
-			k if k == self.mapping.ms => {
-				self.device.position(&Wheel::Rudder, 50).unwrap();
+			k if k == self.input.lm => {
+				self.device.position(&self.output.la, 50).unwrap();
 			},
-			k if k == self.mapping.ls => {
-				self.device.position(&Wheel::Rudder, 22).unwrap();
+			k if k == self.input.ls => {
+				self.device.position(&self.output.la, 22).unwrap();
 			},
-			k if k == self.mapping.r => {
-				self.device.press(&GamePad::TR).unwrap();
-				self.device.position(&Wheel::Throttle, 128).unwrap();
+			k if k == self.input.r => {
+				self.device.press(&self.output.r).unwrap();
+				self.device.position(&self.output.ra, 128).unwrap();
 			},
 
 			// stick
-			k if k == self.mapping.up => {
-				self.device.position(&Position::Y, 0).unwrap();
+			k if k == self.input.up => {
+				self.device.position(&self.output.up, 0).unwrap();
 			},
-			k if k == self.mapping.down => {
-				self.device.position(&Position::Y, 255).unwrap();
+			k if k == self.input.down => {
+				self.device.position(&self.output.down, 255).unwrap();
 			},
-			k if k == self.mapping.left => {
-				self.device.position(&Position::X, 0).unwrap();
+			k if k == self.input.left => {
+				self.device.position(&self.output.left, 0).unwrap();
 			},
-			k if k == self.mapping.right => {
-				self.device.position(&Position::X, 255).unwrap();
+			k if k == self.input.right => {
+				self.device.position(&self.output.right, 255).unwrap();
 			},
 
 			// c-stick
-			k if k == self.mapping.c_up => {
-				self.device.position(&Position::RY, 0).unwrap();
+			k if k == self.input.c_up => {
+				self.device.position(&self.output.c_up, 0).unwrap();
 			},
-			k if k == self.mapping.c_down => {
-				self.device.position(&Position::RY, 255).unwrap();
+			k if k == self.input.c_down => {
+				self.device.position(&self.output.c_down, 255).unwrap();
 			},
-			k if k == self.mapping.c_left => {
-				self.device.position(&Position::RX, 0).unwrap();
+			k if k == self.input.c_left => {
+				self.device.position(&self.output.c_left, 0).unwrap();
 			},
-			k if k == self.mapping.c_right => {
-				self.device.position(&Position::RX, 255).unwrap();
+			k if k == self.input.c_right => {
+				self.device.position(&self.output.c_right, 255).unwrap();
 			},
 
 			_ => (),
@@ -224,67 +276,67 @@ impl Rekt {
 	fn release(&mut self, key: Key) {
 		match key {
 			// face
-			k if k == self.mapping.start => {
-				self.device.release(&GamePad::Start).unwrap();
+			k if k == self.input.start => {
+				self.device.release(&self.output.start).unwrap();
 			},
-			k if k == self.mapping.a => {
-				self.device.release(&GamePad::A).unwrap();
+			k if k == self.input.a => {
+				self.device.release(&self.output.a).unwrap();
 			},
-			k if k == self.mapping.b => {
-				self.device.release(&GamePad::B).unwrap();
+			k if k == self.input.b => {
+				self.device.release(&self.output.y).unwrap();
 			},
-			k if k == self.mapping.x => {
-				self.device.release(&GamePad::X).unwrap();
+			k if k == self.input.x => {
+				self.device.release(&self.output.x).unwrap();
 			},
-			k if k == self.mapping.y => {
-				self.device.release(&GamePad::Y).unwrap();
+			k if k == self.input.y => {
+				self.device.release(&self.output.y).unwrap();
 			},
-			k if k == self.mapping.z => {
-				self.device.release(&GamePad::ThumbR).unwrap();
+			k if k == self.input.z => {
+				self.device.release(&self.output.z).unwrap();
 			},
 
 			// triggers
-			k if k == self.mapping.l => {
-				self.device.release(&GamePad::TL).unwrap();
-				self.device.position(&Wheel::Rudder, 0).unwrap();
+			k if k == self.input.l => {
+				self.device.release(&self.output.l).unwrap();
+				self.device.position(&self.output.la, 0).unwrap();
 			},
-			k if k == self.mapping.ms => {
-				self.device.position(&Wheel::Rudder, 0).unwrap();
+			k if k == self.input.lm => {
+				self.device.position(&self.output.la, 0).unwrap();
 			},
-			k if k == self.mapping.ls => {
-				self.device.position(&Wheel::Rudder, 0).unwrap();
+			k if k == self.input.ls => {
+				self.device.position(&self.output.la, 0).unwrap();
 			},
-			k if k == self.mapping.r => {
-				self.device.release(&GamePad::TR).unwrap();
-				self.device.position(&Wheel::Throttle, 0).unwrap();
+			k if k == self.input.r => {
+				self.device.release(&self.output.r).unwrap();
+				self.device.position(&self.output.la, 0).unwrap();
 			},
 
 			// stick
-			k if k == self.mapping.up => {
-				self.device.position(&Position::Y, 128).unwrap();
+			k if k == self.input.up => {
+				self.device.position(&self.output.up, 128).unwrap();
 			},
-			k if k == self.mapping.down => {
-				self.device.position(&Position::Y, 128).unwrap();
+			k if k == self.input.down => {
+				self.device.position(&self.output.down, 128).unwrap();
 			},
-			k if k == self.mapping.left => {
-				self.device.position(&Position::X, 128).unwrap();
+			k if k == self.input.left => {
+				self.device.position(&self.output.left, 128).unwrap();
 			},
-			k if k == self.mapping.right => {
-				self.device.position(&Position::X, 128).unwrap();
+			k if k == self.input.right => {
+				self.device.position(&self.output.right, 128).unwrap();
 			},
 
 			// c-stick
-			k if k == self.mapping.c_up => {
-				self.device.position(&Position::RY, 128).unwrap();
+			k if k == self.input.c_up => {
+				self.device.position(&self.output.c_up, 128).unwrap();
 			},
-			k if k == self.mapping.c_down => {
-				self.device.position(&Position::RY, 128).unwrap();
+			k if k == self.input.c_down => {
+				self.device.position(&self.output.c_down, 128).unwrap();
 			},
-			k if k == self.mapping.c_left => {
-				self.device.position(&Position::RX, 128).unwrap();
+			k if k == self.input.c_left => {
+				self.device.position(&self.output.c_left, 128).unwrap();
 			},
-			k if k == self.mapping.c_right => {
-				self.device.position(&Position::RX, 128).unwrap();
+			k if k == self.input.c_right => {
+				self.device.position(&self.output.c_right, 128).unwrap();
 			},
 
 			_ => (),

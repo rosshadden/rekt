@@ -9,3 +9,4 @@
   - [ ] implement some sort of SOCD handling
   - [ ] dpad
   - [ ] vet refactoring to have press/release set bitmask values and call an `update` method
+  - [ ] combine output directions into axes
