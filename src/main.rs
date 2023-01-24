@@ -1,7 +1,7 @@
 use std::{sync::mpsc::channel, thread};
 
 use rdev::{listen, Event, EventType, Key};
-use uinput::{event::{Controller, controller}, Device};
+use uinput::{event::{Controller, controller::{self, GamePad}, absolute::{self, Wheel}, Absolute, self}, Device};
 
 struct Mapping {
 	// face
@@ -51,6 +51,12 @@ impl Rekt {
 		let device = uinput::default().unwrap()
 			.name("rekt").unwrap()
 			.event(Controller::All).unwrap()
+			.event(Absolute::Wheel(Wheel::Rudder)).unwrap()
+				.min(-128)
+				.max(128)
+			.event(Absolute::Wheel(Wheel::Gas)).unwrap()
+				.min(-128)
+				.max(128)
 			.create().unwrap()
 		;
 
@@ -114,22 +120,38 @@ impl Rekt {
 		match key {
 			// face
 			k if k == self.mapping.start => {
-				self.device.press(&controller::GamePad::Start).unwrap();
+				self.device.press(&GamePad::Start).unwrap();
 			},
 			k if k == self.mapping.a => {
-				self.device.press(&controller::GamePad::A).unwrap();
+				self.device.press(&GamePad::A).unwrap();
 			},
 			k if k == self.mapping.b => {
-				self.device.press(&controller::GamePad::B).unwrap();
+				self.device.press(&GamePad::B).unwrap();
 			},
 			k if k == self.mapping.x => {
-				self.device.press(&controller::GamePad::X).unwrap();
+				self.device.press(&GamePad::X).unwrap();
 			},
 			k if k == self.mapping.y => {
-				self.device.press(&controller::GamePad::Y).unwrap();
+				self.device.press(&GamePad::Y).unwrap();
 			},
 			k if k == self.mapping.z => {
-				self.device.press(&controller::GamePad::ThumbR).unwrap();
+				self.device.press(&GamePad::ThumbR).unwrap();
+			},
+
+			// triggers
+			k if k == self.mapping.l => {
+				self.device.press(&GamePad::TL).unwrap();
+				self.device.position(&Wheel::Rudder, 128).unwrap();
+			},
+			k if k == self.mapping.ms => {
+				self.device.position(&Wheel::Rudder, 50).unwrap();
+			},
+			k if k == self.mapping.ls => {
+				self.device.position(&Wheel::Rudder, 22).unwrap();
+			},
+			k if k == self.mapping.r => {
+				self.device.press(&GamePad::TR).unwrap();
+				self.device.position(&Wheel::Gas, 128).unwrap();
 			},
 
 			_ => println!("pressed: {:?}", key),
@@ -140,22 +162,38 @@ impl Rekt {
 		match key {
 			// face
 			k if k == self.mapping.start => {
-				self.device.release(&controller::GamePad::Start).unwrap();
+				self.device.release(&GamePad::Start).unwrap();
 			},
 			k if k == self.mapping.a => {
-				self.device.release(&controller::GamePad::A).unwrap();
+				self.device.release(&GamePad::A).unwrap();
 			},
 			k if k == self.mapping.b => {
-				self.device.release(&controller::GamePad::B).unwrap();
+				self.device.release(&GamePad::B).unwrap();
 			},
 			k if k == self.mapping.x => {
-				self.device.release(&controller::GamePad::X).unwrap();
+				self.device.release(&GamePad::X).unwrap();
 			},
 			k if k == self.mapping.y => {
-				self.device.release(&controller::GamePad::Y).unwrap();
+				self.device.release(&GamePad::Y).unwrap();
 			},
 			k if k == self.mapping.z => {
-				self.device.release(&controller::GamePad::ThumbR).unwrap();
+				self.device.release(&GamePad::ThumbR).unwrap();
+			},
+
+			// triggers
+			k if k == self.mapping.l => {
+				self.device.release(&GamePad::TL).unwrap();
+				self.device.position(&Wheel::Rudder, 0).unwrap();
+			},
+			k if k == self.mapping.ms => {
+				self.device.position(&Wheel::Rudder, 0).unwrap();
+			},
+			k if k == self.mapping.ls => {
+				self.device.position(&Wheel::Rudder, 0).unwrap();
+			},
+			k if k == self.mapping.r => {
+				self.device.release(&GamePad::TR).unwrap();
+				self.device.position(&Wheel::Gas, 0).unwrap();
 			},
 
 			_ => (),
