@@ -175,6 +175,10 @@ impl Rekt {
 				self.state.c_horizontal = 255;
 			},
 
+			// modifiers
+			k if k == self.input.mod_x => self.state.mod_x = true,
+			k if k == self.input.mod_y => self.state.mod_y = true,
+
 			_ => (),
 		}
 	}
@@ -240,6 +244,10 @@ impl Rekt {
 				self.state.c_right = false;
 				self.state.c_horizontal = 128;
 			},
+
+			// modifiers
+			k if k == self.input.mod_x => self.state.mod_x = false,
+			k if k == self.input.mod_y => self.state.mod_y = false,
 
 			_ => (),
 		}
@@ -310,19 +318,64 @@ impl Rekt {
 
 		// angles
 		if horizontal && vertical {
-			if self.state.left || self.state.right {
+			if self.state.l || self.state.r {
 				if self.state.mod_x == self.state.mod_y {
 					// shield drops
 					if self.state.down {
 						self.state.coords.x = 0.725;
 						self.state.coords.y = 0.675;
-						if self.state.left { self.state.coords.x = -self.state.coords.x }
 					}
+				} else if self.state.mod_x {
+					self.state.coords.x = 0.6375;
+					self.state.coords.y = 0.375;
+				} else if self.state.mod_y {
+					self.state.coords.x = 0.5;
+					self.state.coords.y = 0.85;
 				}
+			} else if self.state.mod_x != self.state.mod_y {
+				if self.state.mod_x {
+					self.state.coords.x = 0.7375;
+					self.state.coords.y = 0.3125;
+				} else {
+					self.state.coords.x = 0.3125;
+					self.state.coords.y = 0.7375;
+				}
+			} else {
+				self.state.coords.x = 0.7;
+				self.state.coords.y = 0.7;
 			}
+		} else if horizontal {
+			if self.state.mod_x == self.state.mod_y {
+				self.state.coords.x = 1.0;
+				self.state.coords.y = 0.0;
+			} else if self.state.mod_x {
+				self.state.coords.x = 0.45;
+				self.state.coords.y = 0.0;
+			} else {
+				self.state.coords.x = 0.3375;
+				self.state.coords.y = 0.0;
+			}
+		} else if vertical {
+			if self.state.mod_x == self.state.mod_y {
+				self.state.coords.x = 0.0;
+				self.state.coords.y = 1.0;
+			} else if self.state.mod_x {
+				self.state.coords.x = 0.0;
+				self.state.coords.y = 0.3375;
+			} else {
+				self.state.coords.x = 0.0;
+				self.state.coords.y = 0.3375;
+			}
+		} else {
+			self.state.coords.x = 0.0;
+			self.state.coords.y = 0.0;
 		}
 
+		if horizontal && !self.state.right { self.state.coords.x = -self.state.coords.x }
+		if vertical && !self.state.down { self.state.coords.y = -self.state.coords.y }
+
 		let coords = self.state.coords.to_bytes();
+		println!("{:?} => {:?}", self.state.coords, coords);
 		self.device.send(self.output.horizontal, coords.0).unwrap();
 		self.device.send(self.output.vertical, coords.1).unwrap();
 
