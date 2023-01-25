@@ -325,6 +325,9 @@ impl Rekt {
 					if self.state.down {
 						self.state.coords.x = 0.725;
 						self.state.coords.y = 0.675;
+					} else {
+						self.state.coords.x = 0.7;
+						self.state.coords.y = 0.7;
 					}
 				} else if self.state.mod_x {
 					self.state.coords.x = 0.6375;
@@ -382,7 +385,7 @@ impl Rekt {
 		if vertical && !self.state.down { self.state.coords.y = -self.state.coords.y }
 
 		let coords = self.state.coords.to_bytes();
-		println!("{:?} => {:?}", self.state.coords, coords);
+		// println!("{:?} => {:?}", self.state.coords, coords);
 		self.device.send(self.output.horizontal, coords.0).unwrap();
 		self.device.send(self.output.vertical, coords.1).unwrap();
 
