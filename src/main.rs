@@ -314,8 +314,9 @@ impl Rekt {
 				if self.state.mod_x == self.state.mod_y {
 					// shield drops
 					if self.state.down {
-						coords.0 = if self.state.left { 128 - 88 } else { 128 + 88 };
-						coords.1 = 128 + 90;
+						self.state.coords.x = 0.725;
+						self.state.coords.y = 0.675;
+						if self.state.left { self.state.coords.x = -self.state.coords.x }
 					}
 				}
 			}
