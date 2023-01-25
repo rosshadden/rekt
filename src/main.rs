@@ -262,7 +262,7 @@ impl Rekt {
 
 		// stick
 
-		// SOCD
+		// vertical SOCD
 		// TODO: abstract
 		if self.state.up && self.state.down {
 			if self.state_cache.up {
@@ -284,6 +284,7 @@ impl Rekt {
 			self.state_cache.down = false;
 		}
 
+		// horizontal SOCD
 		if self.state.left && self.state.right {
 			if self.state_cache.left {
 				self.state.horizontal = 255;
@@ -304,8 +305,25 @@ impl Rekt {
 			self.state_cache.right = false;
 		}
 
-		self.device.send(self.output.horizontal, self.state.horizontal.into()).unwrap();
-		self.device.send(self.output.vertical, self.state.vertical.into()).unwrap();
+		let mut coords: (u8, u8) = (self.state.horizontal, self.state.vertical);
+		let horizontal = self.state.left || self.state.right;
+		let vertical = self.state.up || self.state.down;
+
+		// angles
+		if horizontal && vertical {
+			if self.state.left || self.state.right {
+				if self.state.mod_x == self.state.mod_y {
+					// shield drops
+					if self.state.down {
+						coords.0 = if self.state.left { 128 - 88 } else { 128 + 88 };
+						coords.1 = 128 + 90;
+					}
+				}
+			}
+		}
+
+		self.device.send(self.output.horizontal, coords.0.into()).unwrap();
+		self.device.send(self.output.vertical, coords.1.into()).unwrap();
 
 		// c-stick
 		self.device.send(self.output.c_horizontal, self.state.c_horizontal.into()).unwrap();
