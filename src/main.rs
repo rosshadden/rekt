@@ -319,6 +319,7 @@ impl Rekt {
 		// angles
 		if horizontal && vertical {
 			if self.state.l || self.state.r {
+				// shield
 				if self.state.mod_x == self.state.mod_y {
 					// shield drops
 					if self.state.down {
@@ -331,6 +332,12 @@ impl Rekt {
 				} else if self.state.mod_y {
 					self.state.coords.x = 0.5;
 					self.state.coords.y = 0.85;
+				}
+			} else if self.state.b {
+				// b
+				if self.state.mod_x == self.state.mod_y {
+					self.state.coords.x = 0.59;
+					self.state.coords.y = 0.81;
 				}
 			} else if self.state.mod_x != self.state.mod_y {
 				if self.state.mod_x {
