@@ -1,14 +1,24 @@
+@document.meta
+title: TODO
+description: TODO list for rekt
+authors: ross
+categories: melee controller gamepad
+created: 2023-01-22
+updated: 2023-01-24
+version: 0.1.0
+@end
+
 * TODO
 
-  - [x] figure out better cstick keys
-  - [x] analog shield
-  - [x] reset on startup
-  - [ ] mod keys
-  - [x] infinitely many refactors
-  - [x] possibly rewrite in faster language
-  - [x] implement some sort of SOCD handling
-  - [ ] dpad
-  - [x] refactor press/release to modify one state and call an `update` method that does the work
-  - [x] combine output directions into axes
-  - [ ] make press/release more dynamic, relying on event type match guards for logic/values
-  - [ ] make device init dynamic
+  - (x) figure out better cstick keys
+  - (x) analog shield
+  - (x) reset on startup
+  - ( ) mod keys
+  - (x) infinitely many refactors
+  - (x) possibly rewrite in faster language
+  - (x) implement some sort of SOCD handling
+  - ( ) dpad
+  - (x) refactor press/release to modify one state and call an `update` method that does the work
+  - (x) combine output directions into axes
+  - ( ) make press/release more dynamic, relying on event type match guards for logic/values
+  - ( ) make device init dynamic
