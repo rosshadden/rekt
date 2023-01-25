@@ -142,19 +142,19 @@ impl Rekt {
 			// stick
 			k if k == self.input.up => {
 				self.state.up = true;
-				self.state.vertical = 0;
+				self.state.coords.y = -1.0;
 			},
 			k if k == self.input.down => {
 				self.state.down = true;
-				self.state.vertical = 255;
+				self.state.coords.y = 1.0;
 			},
 			k if k == self.input.left => {
 				self.state.left = true;
-				self.state.horizontal = 0;
+				self.state.coords.x = -1.0;
 			},
 			k if k == self.input.right => {
 				self.state.right = true;
-				self.state.horizontal = 255;
+				self.state.coords.x = 1.0;
 			},
 
 			// c-stick
@@ -205,22 +205,22 @@ impl Rekt {
 			k if k == self.input.up => {
 				self.state.up = false;
 				self.state_cache.up = false;
-				self.state.vertical = 128;
+				self.state.coords.y = 0.0;
 			},
 			k if k == self.input.down => {
 				self.state.down = false;
 				self.state_cache.down = false;
-				self.state.vertical = 128;
+				self.state.coords.y = 0.0;
 			},
 			k if k == self.input.left => {
 				self.state.left = false;
 				self.state_cache.left = false;
-				self.state.horizontal = 128;
+				self.state.coords.x = 0.0;
 			},
 			k if k == self.input.right => {
 				self.state.right = false;
 				self.state_cache.right = false;
-				self.state.horizontal = 128;
+				self.state.coords.x = 0.0;
 			},
 
 			// c-stick
@@ -266,19 +266,19 @@ impl Rekt {
 		// TODO: abstract
 		if self.state.up && self.state.down {
 			if self.state_cache.up {
-				self.state.vertical = 255;
+				self.state.coords.y = 1.0;
 			} else if self.state_cache.down {
-				self.state.vertical = 0;
+				self.state.coords.y = -1.0;
 			} else {
-				self.state.vertical = 128;
+				self.state.coords.y = 0.0;
 				// unreachable!("they said it couldn't be done");
 			}
 		} else if self.state.up {
 			self.state_cache.up = true;
-			self.state.vertical = 0;
+			self.state.coords.y = -1.0;
 		} else if self.state.down {
 			self.state_cache.down = true;
-			self.state.vertical = 255;
+			self.state.coords.y = 1.0;
 		} else {
 			self.state_cache.up = false;
 			self.state_cache.down = false;
@@ -287,25 +287,24 @@ impl Rekt {
 		// horizontal SOCD
 		if self.state.left && self.state.right {
 			if self.state_cache.left {
-				self.state.horizontal = 255;
+				self.state.coords.x = 1.0;
 			} else if self.state_cache.right {
-				self.state.horizontal = 0;
+				self.state.coords.x = -1.0;
 			} else {
-				self.state.horizontal = 128;
+				self.state.coords.x = 0.0;
 				// unreachable!("they said it couldn't be done");
 			}
 		} else if self.state.left {
 			self.state_cache.left = true;
-			self.state.horizontal = 0;
+			self.state.coords.x = -1.0;
 		} else if self.state.right {
 			self.state_cache.right = true;
-			self.state.horizontal = 255;
+			self.state.coords.x = 1.0;
 		} else {
 			self.state_cache.left = false;
 			self.state_cache.right = false;
 		}
 
-		let mut coords: (u8, u8) = (self.state.horizontal, self.state.vertical);
 		let horizontal = self.state.left || self.state.right;
 		let vertical = self.state.up || self.state.down;
 
@@ -322,8 +321,9 @@ impl Rekt {
 			}
 		}
 
-		self.device.send(self.output.horizontal, coords.0.into()).unwrap();
-		self.device.send(self.output.vertical, coords.1.into()).unwrap();
+		let coords = self.state.coords.to_bytes();
+		self.device.send(self.output.horizontal, coords.0).unwrap();
+		self.device.send(self.output.vertical, coords.1).unwrap();
 
 		// c-stick
 		self.device.send(self.output.c_horizontal, self.state.c_horizontal.into()).unwrap();

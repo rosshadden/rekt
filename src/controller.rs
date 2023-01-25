@@ -63,7 +63,21 @@ pub struct OutputMap {
 	pub d_right: GamePad,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
+pub struct Coords {
+	pub x: f32,
+	pub y: f32,
+}
+
+impl Coords {
+	pub fn to_bytes(self) -> (i32, i32) {
+		(
+			((self.x * 128.0) + 128.0) as i32,
+			((self.y * 128.0) + 128.0) as i32 - 1,
+		)
+	}
+}
+
 pub struct State {
 	// face
 	pub start: bool,
@@ -84,8 +98,7 @@ pub struct State {
 	pub down: bool,
 	pub left: bool,
 	pub right: bool,
-	pub horizontal: u8,
-	pub vertical: u8,
+	pub coords: Coords,
 
 	// c-stick
 	pub c_up: bool,
@@ -125,8 +138,7 @@ impl State {
 			down: false,
 			left: false,
 			right: false,
-			horizontal: 128,
-			vertical: 128,
+			coords: Coords { x: 0.0, y: 0.0 },
 
 			c_up: false,
 			c_down: false,
