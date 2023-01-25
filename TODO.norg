@@ -6,9 +6,9 @@
   - [ ] mod keys
   - [x] infinitely many refactors
   - [x] possibly rewrite in faster language
-  - [ ] implement some sort of SOCD handling
+  - [x] implement some sort of SOCD handling
   - [ ] dpad
-  - [ ] refactor press/release to modify one state and call an `update` method that does the work
+  - [x] refactor press/release to modify one state and call an `update` method that does the work
   - [x] combine output directions into axes
   - [ ] make press/release more dynamic, relying on event type match guards for logic/values
   - [ ] make device init dynamic
