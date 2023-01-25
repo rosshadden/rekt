@@ -204,10 +204,12 @@ impl Rekt {
 			// stick
 			k if k == self.input.up => {
 				self.state.up = false;
+				self.state_cache.up = false;
 				self.state.vertical = 128;
 			},
 			k if k == self.input.down => {
 				self.state.down = false;
+				self.state_cache.down = false;
 				self.state.vertical = 128;
 			},
 			k if k == self.input.left => {
@@ -259,6 +261,29 @@ impl Rekt {
 		self.device.send(self.output.ra, self.state.ra.into()).unwrap();
 
 		// stick
+
+		// SOCD
+		// TODO: abstract
+		if self.state.up && self.state.down {
+			if self.state_cache.up {
+				self.state.vertical = 255;
+			} else if self.state_cache.down {
+				self.state.vertical = 0;
+			} else {
+				self.state.vertical = 128;
+				// unreachable!("they said it couldn't be done");
+			}
+		} else if self.state.up {
+			self.state_cache.up = true;
+			self.state.vertical = 0;
+		} else if self.state.down {
+			self.state_cache.down = true;
+			self.state.vertical = 255;
+		} else {
+			self.state_cache.up = false;
+			self.state_cache.down = false;
+		}
+
 		if self.state.left && self.state.right {
 			if self.state_cache.left {
 				self.state.horizontal = 255;
@@ -278,6 +303,7 @@ impl Rekt {
 			self.state_cache.left = false;
 			self.state_cache.right = false;
 		}
+
 		self.device.send(self.output.horizontal, self.state.horizontal.into()).unwrap();
 		self.device.send(self.output.vertical, self.state.vertical.into()).unwrap();
 
