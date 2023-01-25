@@ -349,10 +349,10 @@ impl Rekt {
 				self.state.coords.x = 1.0;
 				self.state.coords.y = 0.0;
 			} else if self.state.mod_x {
-				self.state.coords.x = 0.45;
+				self.state.coords.x = 0.3;
 				self.state.coords.y = 0.0;
 			} else {
-				self.state.coords.x = 0.3375;
+				self.state.coords.x = 0.45;
 				self.state.coords.y = 0.0;
 			}
 		} else if vertical {
@@ -361,10 +361,10 @@ impl Rekt {
 				self.state.coords.y = 1.0;
 			} else if self.state.mod_x {
 				self.state.coords.x = 0.0;
-				self.state.coords.y = 0.3375;
+				self.state.coords.y = 0.45;
 			} else {
 				self.state.coords.x = 0.0;
-				self.state.coords.y = 0.3375;
+				self.state.coords.y = 0.3;
 			}
 		} else {
 			self.state.coords.x = 0.0;
