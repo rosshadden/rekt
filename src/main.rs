@@ -247,9 +247,8 @@ impl Rekt {
 				}
 			} else if self.state.b {
 				// b
-				if self.state.mod_x == self.state.mod_y {
-					self.state.coords.set(0.59, 0.81);
-				}
+				// prefer vertical b, allows slideoffs until higher percents than 45°
+				self.state.coords.set_deg(58.3, None);
 			} else if self.state.mod_x != self.state.mod_y {
 				if self.state.mod_x {
 					self.state.coords.set(0.7375, 0.3125);
@@ -263,17 +262,17 @@ impl Rekt {
 			if self.state.mod_x == self.state.mod_y {
 				self.state.coords.set_deg(0.0, None);
 			} else if self.state.mod_x {
-				self.state.coords.set(0.3, 0.0);
+				self.state.coords.set_deg(0.0, Some(0.49));
 			} else {
-				self.state.coords.set(0.45, 0.0);
+				self.state.coords.set_deg(0.0, Some(0.215));
 			}
 		} else if vertical {
 			if self.state.mod_x == self.state.mod_y {
 				self.state.coords.set_deg(90.0, None);
 			} else if self.state.mod_x {
-				self.state.coords.set(0.0, 0.45);
+				self.state.coords.set_deg(90.0, Some(0.4));
 			} else {
-				self.state.coords.set(0.0, 0.3);
+				self.state.coords.set_deg(90.0, Some(0.4525));
 			}
 		} else {
 			self.state.coords.set(0.0, 0.0);
@@ -298,20 +297,20 @@ impl Rekt {
 
 		// c-stick
 
-		let c_horizontal = self.state.c_left || self.state.c_right;
-		let c_vertical = self.state.c_up || self.state.c_down;
+		let c_horizontal = self.state.c_left != self.state.c_right;
+		let c_vertical = self.state.c_up != self.state.c_down;
 
 		if c_horizontal {
 			self.state.c_coords.set_x(1.0);
 			// mirror
-			if !self.state.c_right { self.state.c_coords.set_x(-self.state.c_coords.x) }
+			if self.state.c_left { self.state.c_coords.set_x(-self.state.c_coords.x) }
 		} else {
 			self.state.c_coords.set_x(0.0);
 		}
 		if c_vertical {
 			self.state.c_coords.set_y(1.0);
 			// mirror
-			if !self.state.c_down { self.state.c_coords.set_y(-self.state.c_coords.y) }
+			if self.state.c_up { self.state.c_coords.set_y(-self.state.c_coords.y) }
 		} else {
 			self.state.c_coords.set_y(0.0);
 		}
