@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use rdev::Key;
 use uinput::event::{controller::GamePad, absolute::{Wheel, Position}};
 
@@ -68,22 +70,33 @@ pub struct OutputMap {
 
 #[derive(Clone, Copy, Debug)]
 pub struct Coords {
-	pub x: f32,
-	pub y: f32,
+	pub x: f64,
+	pub y: f64,
 }
 
 impl Coords {
-	pub fn set(&mut self, x: f32, y: f32) {
+	pub fn set(&mut self, x: f64, y: f64) {
 		self.x = x;
 		self.y = y;
 	}
 
-	pub fn set_x(&mut self, x: f32) {
+	pub fn set_x(&mut self, x: f64) {
 		self.x = x;
 	}
 
-	pub fn set_y(&mut self, y: f32) {
+	pub fn set_y(&mut self, y: f64) {
 		self.y = y;
+	}
+
+	pub fn set_vec(&mut self, angle: f64, length: Option<f64>) {
+		let len = length.unwrap_or(1.0);
+		let sincos = angle.sin_cos();
+		self.x = sincos.1 * len;
+		self.y = sincos.0 * len;
+	}
+
+	pub fn set_deg(&mut self, degrees: f64, length: Option<f64>) {
+		self.set_vec(degrees * PI / 180.0, length);
 	}
 
 	pub fn to_bytes(self) -> (i32, i32) {

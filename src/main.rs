@@ -1,4 +1,4 @@
-use std::{sync::mpsc::channel, thread};
+use std::{sync::mpsc::channel, thread, f64::consts::PI};
 
 use rdev::{listen, EventType, Key};
 use uinput::{event::{Controller, controller::GamePad, absolute::{self, Wheel, Position}, Absolute}, Device};
@@ -201,6 +201,9 @@ impl Rekt {
 			k if k == self.input.mod_x => self.state.mod_x = false,
 			k if k == self.input.mod_y => self.state.mod_y = false,
 
+			// debug
+			k if k == self.input.debug => self.state.debug = false,
+
 			_ => (),
 		}
 	}
@@ -232,18 +235,15 @@ impl Rekt {
 				if self.state.mod_x == self.state.mod_y {
 					// shield drops
 					if self.state.down {
-						self.state.coords.x = 0.725;
-						self.state.coords.y = 0.675;
+						self.state.coords.set(0.725, 0.675);
 					} else {
-						self.state.coords.x = 0.7;
-						self.state.coords.y = 0.7;
+						self.state.coords.set_deg(45.0, None);
 					}
 				} else if self.state.mod_x {
-					self.state.coords.x = 0.6375;
-					self.state.coords.y = 0.375;
+					self.state.coords.set_deg(17.0, None);
 				} else if self.state.mod_y {
-					self.state.coords.x = 0.5;
-					self.state.coords.y = 0.85;
+					// self.state.coords.set(0.5, 0.85);
+					self.state.coords.set_deg(73.0, None);
 				}
 			} else if self.state.b {
 				// b
@@ -260,30 +260,23 @@ impl Rekt {
 					self.state.coords.y = 0.7375;
 				}
 			} else {
-				self.state.coords.x = 0.7;
-				self.state.coords.y = 0.7;
+				self.state.coords.set_deg(45.0, None);
 			}
 		} else if horizontal {
 			if self.state.mod_x == self.state.mod_y {
-				self.state.coords.x = 1.0;
-				self.state.coords.y = 0.0;
+				self.state.coords.set_deg(0.0, None);
 			} else if self.state.mod_x {
-				self.state.coords.x = 0.3;
-				self.state.coords.y = 0.0;
+				self.state.coords.set(0.3, 0.0);
 			} else {
-				self.state.coords.x = 0.45;
-				self.state.coords.y = 0.0;
+				self.state.coords.set(0.45, 0.0);
 			}
 		} else if vertical {
 			if self.state.mod_x == self.state.mod_y {
-				self.state.coords.x = 0.0;
-				self.state.coords.y = 1.0;
+				self.state.coords.set_deg(90.0, None);
 			} else if self.state.mod_x {
-				self.state.coords.x = 0.0;
-				self.state.coords.y = 0.45;
+				self.state.coords.set(0.0, 0.45);
 			} else {
-				self.state.coords.x = 0.0;
-				self.state.coords.y = 0.3;
+				self.state.coords.set(0.0, 0.3);
 			}
 		} else {
 			self.state.coords.set(0.0, 0.0);
@@ -291,13 +284,13 @@ impl Rekt {
 
 		if horizontal {
 			// SOCD
-			if self.state.right && self.state.left { self.state.coords.x = 0.0 }
+			if self.state.right && self.state.left { self.state.coords.set_x(0.0) }
 			// mirror
 			if !self.state.right { self.state.coords.x = -self.state.coords.x }
 		}
 		if vertical {
 			// SOCD
-			if self.state.up && self.state.down { self.state.coords.y = 0.0 }
+			if self.state.up && self.state.down { self.state.coords.set_y(0.0) }
 			// mirror
 			if !self.state.down { self.state.coords.y = -self.state.coords.y }
 		}
