@@ -71,6 +71,9 @@ impl Rekt {
 				// mods
 				mod_x: Key::Space,
 				mod_y: Key::Alt,
+
+				// debug
+				debug: Key::SemiColon,
 			},
 
 			output: controller::OutputMap {
@@ -172,6 +175,9 @@ impl Rekt {
 			// modifiers
 			k if k == self.input.mod_x => self.state.mod_x = true,
 			k if k == self.input.mod_y => self.state.mod_y = true,
+
+			// debug
+			k if k == self.input.debug => self.state.debug = true,
 
 			_ => (),
 		}
@@ -337,13 +343,15 @@ impl Rekt {
 		}
 
 		let coord_values = self.state.coords.to_bytes();
-		// println!("{:?} => {:?}", self.state.coords, coord_values);
 		self.device.send(self.output.horizontal, coord_values.0).unwrap();
 		self.device.send(self.output.vertical, coord_values.1).unwrap();
 
 		// c-stick
 		self.device.send(self.output.c_horizontal, self.state.c_horizontal.into()).unwrap();
 		self.device.send(self.output.c_vertical, self.state.c_vertical.into()).unwrap();
+
+		// debug
+		if self.state.debug { println!("{:?} => {:?}", self.state.coords, coord_values) }
 
 		self.update();
 	}

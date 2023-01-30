@@ -31,6 +31,9 @@ pub struct InputMap {
 	// mods
 	pub mod_x: Key,
 	pub mod_y: Key,
+
+	// debug
+	pub debug: Key,
 }
 
 pub struct OutputMap {
@@ -122,6 +125,9 @@ pub struct State {
 	// mods
 	pub mod_x: bool,
 	pub mod_y: bool,
+
+	// debug
+	pub debug: bool,
 }
 
 impl State {
@@ -159,6 +165,8 @@ impl State {
 
 			mod_x: false,
 			mod_y: false,
+
+			debug: false,
 		}
 	}
 }
