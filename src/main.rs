@@ -47,15 +47,15 @@ impl Rekt {
 				start: Key::KeyF,
 				a: Key::Kp0,
 				b: Key::Kp4,
-				x: Key::Kp8,
-				y: Key::KpDivide,
-				z: Key::Kp9,
+				x: Key::Kp5,
+				y: Key::Kp8,
+				z: Key::Kp6,
 
 				// triggers
 				l: Key::KeyA,
 				r: Key::Kp7,
-				lm: Key::KpReturn,
-				ls: Key::KpPlus,
+				lm: Key::KpPlus,
+				ls: Key::KpReturn,
 
 				// stick
 				up: Key::Dot,
@@ -70,8 +70,8 @@ impl Rekt {
 				c_right: Key::RightArrow,
 
 				// mods
-				mod_x: Key::KeyK,
-				mod_y: Key::Space,
+				mod_x: Key::Space,
+				mod_y: Key::Alt,
 			},
 
 			output: controller::OutputMap {
