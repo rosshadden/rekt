@@ -70,6 +70,11 @@ pub struct Coords {
 }
 
 impl Coords {
+	pub fn set(&mut self, x: f32, y: f32) {
+		self.x = x;
+		self.y = y;
+	}
+
 	pub fn to_bytes(self) -> (i32, i32) {
 		(
 			((self.x * 128.0) + 128.0) as i32,

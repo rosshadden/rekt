@@ -10,7 +10,6 @@ struct Rekt {
 	input: controller::InputMap,
 	output: controller::OutputMap,
 	state: controller::State,
-	state_cache: controller::State,
 }
 
 impl Rekt {
@@ -105,7 +104,6 @@ impl Rekt {
 			},
 
 			state: controller::State::new(),
-			state_cache: controller::State::new(),
 		}
 	}
 
@@ -142,19 +140,15 @@ impl Rekt {
 			// stick
 			k if k == self.input.up => {
 				self.state.up = true;
-				self.state.coords.y = -1.0;
 			},
 			k if k == self.input.down => {
 				self.state.down = true;
-				self.state.coords.y = 1.0;
 			},
 			k if k == self.input.left => {
 				self.state.left = true;
-				self.state.coords.x = -1.0;
 			},
 			k if k == self.input.right => {
 				self.state.right = true;
-				self.state.coords.x = 1.0;
 			},
 
 			// c-stick
@@ -208,23 +202,15 @@ impl Rekt {
 			// stick
 			k if k == self.input.up => {
 				self.state.up = false;
-				self.state_cache.up = false;
-				self.state.coords.y = 0.0;
 			},
 			k if k == self.input.down => {
 				self.state.down = false;
-				self.state_cache.down = false;
-				self.state.coords.y = 0.0;
 			},
 			k if k == self.input.left => {
 				self.state.left = false;
-				self.state_cache.left = false;
-				self.state.coords.x = 0.0;
 			},
 			k if k == self.input.right => {
 				self.state.right = false;
-				self.state_cache.right = false;
-				self.state.coords.x = 0.0;
 			},
 
 			// c-stick
@@ -254,6 +240,9 @@ impl Rekt {
 	}
 
 	fn process(&mut self) {
+		let horizontal = self.state.left || self.state.right;
+		let vertical = self.state.up || self.state.down;
+
 		// face
 		self.device.send(self.output.start, self.state.start.into()).unwrap();
 		self.device.send(self.output.a, self.state.a.into()).unwrap();
@@ -269,52 +258,6 @@ impl Rekt {
 		self.device.send(self.output.ra, self.state.ra.into()).unwrap();
 
 		// stick
-
-		// vertical SOCD
-		// TODO: abstract
-		if self.state.up && self.state.down {
-			if self.state_cache.up {
-				self.state.coords.y = 1.0;
-			} else if self.state_cache.down {
-				self.state.coords.y = -1.0;
-			} else {
-				self.state.coords.y = 0.0;
-				// unreachable!("they said it couldn't be done");
-			}
-		} else if self.state.up {
-			self.state_cache.up = true;
-			self.state.coords.y = -1.0;
-		} else if self.state.down {
-			self.state_cache.down = true;
-			self.state.coords.y = 1.0;
-		} else {
-			self.state_cache.up = false;
-			self.state_cache.down = false;
-		}
-
-		// horizontal SOCD
-		if self.state.left && self.state.right {
-			if self.state_cache.left {
-				self.state.coords.x = 1.0;
-			} else if self.state_cache.right {
-				self.state.coords.x = -1.0;
-			} else {
-				self.state.coords.x = 0.0;
-				// unreachable!("they said it couldn't be done");
-			}
-		} else if self.state.left {
-			self.state_cache.left = true;
-			self.state.coords.x = -1.0;
-		} else if self.state.right {
-			self.state_cache.right = true;
-			self.state.coords.x = 1.0;
-		} else {
-			self.state_cache.left = false;
-			self.state_cache.right = false;
-		}
-
-		let horizontal = self.state.left || self.state.right;
-		let vertical = self.state.up || self.state.down;
 
 		// angles
 		if horizontal && vertical {
@@ -377,17 +320,26 @@ impl Rekt {
 				self.state.coords.y = 0.3;
 			}
 		} else {
-			self.state.coords.x = 0.0;
-			self.state.coords.y = 0.0;
+			self.state.coords.set(0.0, 0.0);
 		}
 
-		if horizontal && !self.state.right { self.state.coords.x = -self.state.coords.x }
-		if vertical && !self.state.down { self.state.coords.y = -self.state.coords.y }
+		if horizontal {
+			// SOCD
+			if self.state.right && self.state.left { self.state.coords.x = 0.0 }
+			// mirror axis
+			if horizontal && !self.state.right { self.state.coords.x = -self.state.coords.x }
+		}
+		if vertical {
+			// SOCD
+			if self.state.up && self.state.down { self.state.coords.y = 0.0 }
+			// mirror axis
+			if !self.state.down { self.state.coords.y = -self.state.coords.y }
+		}
 
-		let coords = self.state.coords.to_bytes();
-		// println!("{:?} => {:?}", self.state.coords, coords);
-		self.device.send(self.output.horizontal, coords.0).unwrap();
-		self.device.send(self.output.vertical, coords.1).unwrap();
+		let coord_values = self.state.coords.to_bytes();
+		// println!("{:?} => {:?}", self.state.coords, coord_values);
+		self.device.send(self.output.horizontal, coord_values.0).unwrap();
+		self.device.send(self.output.vertical, coord_values.1).unwrap();
 
 		// c-stick
 		self.device.send(self.output.c_horizontal, self.state.c_horizontal.into()).unwrap();
