@@ -4,7 +4,7 @@ description: TODO list for rekt
 authors: ross
 categories: melee controller gamepad
 created: 2023-01-22
-updated: 2023-01-25
+updated: 2023-01-30
 version: 0.1.0
 @end
 
@@ -23,5 +23,19 @@ version: 0.1.0
   - ( ) make press/release more dynamic, relying on event type match guards for logic/values
   - ( ) make device init dynamic
   - ( ) dashback out of crouch
-  - ( ) wavedash angles
+  - (x) wavedash angles
   - ( ) fix weird run continuing when holding `down`
+  - (x) method to set sticks by angle
+  - (x) method to set sticks by coord
+  - (x) walk quick and slow
+  - (x) up-tilt without jumping
+  - ( ) b tilts
+  - ( ) angled tilts
+  - ( ) angled smashes
+  - ( ) shield tilts
+  - ( ) shield drop down
+  - ( ) dbooc
+  - (x) reliable teeter
+  - ( ) empty pivots
+  - ( ) moonwalk
+  - ( ) sticky walk
