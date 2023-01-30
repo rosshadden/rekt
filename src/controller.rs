@@ -78,6 +78,14 @@ impl Coords {
 		self.y = y;
 	}
 
+	pub fn set_x(&mut self, x: f32) {
+		self.x = x;
+	}
+
+	pub fn set_y(&mut self, y: f32) {
+		self.y = y;
+	}
+
 	pub fn to_bytes(self) -> (i32, i32) {
 		(
 			((self.x * 128.0) + 128.0) as i32,
@@ -113,8 +121,7 @@ pub struct State {
 	pub c_down: bool,
 	pub c_left: bool,
 	pub c_right: bool,
-	pub c_horizontal: u8,
-	pub c_vertical: u8,
+	pub c_coords: Coords,
 
 	// dpad
 	pub d_up: bool,
@@ -155,8 +162,7 @@ impl State {
 			c_down: false,
 			c_left: false,
 			c_right: false,
-			c_horizontal: 128,
-			c_vertical: 128,
+			c_coords: Coords { x: 0.0, y: 0.0 },
 
 			d_up: false,
 			d_down: false,

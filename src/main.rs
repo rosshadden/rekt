@@ -141,36 +141,16 @@ impl Rekt {
 			k if k == self.input.ls => self.state.la = 22,
 
 			// stick
-			k if k == self.input.up => {
-				self.state.up = true;
-			},
-			k if k == self.input.down => {
-				self.state.down = true;
-			},
-			k if k == self.input.left => {
-				self.state.left = true;
-			},
-			k if k == self.input.right => {
-				self.state.right = true;
-			},
+			k if k == self.input.up => { self.state.up = true },
+			k if k == self.input.down => { self.state.down = true },
+			k if k == self.input.left => { self.state.left = true },
+			k if k == self.input.right => { self.state.right = true },
 
 			// c-stick
-			k if k == self.input.c_up => {
-				self.state.c_up = true;
-				self.state.c_vertical = 0;
-			},
-			k if k == self.input.c_down => {
-				self.state.c_down = true;
-				self.state.c_vertical = 255;
-			},
-			k if k == self.input.c_left => {
-				self.state.c_left = true;
-				self.state.c_horizontal = 0;
-			},
-			k if k == self.input.c_right => {
-				self.state.c_right = true;
-				self.state.c_horizontal = 255;
-			},
+			k if k == self.input.c_up => { self.state.c_up = true },
+			k if k == self.input.c_down => { self.state.c_down = true },
+			k if k == self.input.c_left => { self.state.c_left = true },
+			k if k == self.input.c_right => { self.state.c_right = true },
 
 			// modifiers
 			k if k == self.input.mod_x => self.state.mod_x = true,
@@ -206,36 +186,16 @@ impl Rekt {
 			k if k == self.input.ls => self.state.la = 0,
 
 			// stick
-			k if k == self.input.up => {
-				self.state.up = false;
-			},
-			k if k == self.input.down => {
-				self.state.down = false;
-			},
-			k if k == self.input.left => {
-				self.state.left = false;
-			},
-			k if k == self.input.right => {
-				self.state.right = false;
-			},
+			k if k == self.input.up => { self.state.up = false },
+			k if k == self.input.down => { self.state.down = false },
+			k if k == self.input.left => { self.state.left = false },
+			k if k == self.input.right => { self.state.right = false },
 
 			// c-stick
-			k if k == self.input.c_up => {
-				self.state.c_up = false;
-				self.state.c_vertical = 128;
-			},
-			k if k == self.input.c_down => {
-				self.state.c_down = false;
-				self.state.c_vertical = 128;
-			},
-			k if k == self.input.c_left => {
-				self.state.c_left = false;
-				self.state.c_horizontal = 128;
-			},
-			k if k == self.input.c_right => {
-				self.state.c_right = false;
-				self.state.c_horizontal = 128;
-			},
+			k if k == self.input.c_up => { self.state.c_up = false },
+			k if k == self.input.c_down => { self.state.c_down = false },
+			k if k == self.input.c_left => { self.state.c_left = false },
+			k if k == self.input.c_right => { self.state.c_right = false },
 
 			// modifiers
 			k if k == self.input.mod_x => self.state.mod_x = false,
@@ -246,9 +206,6 @@ impl Rekt {
 	}
 
 	fn process(&mut self) {
-		let horizontal = self.state.left || self.state.right;
-		let vertical = self.state.up || self.state.down;
-
 		// face
 		self.device.send(self.output.start, self.state.start.into()).unwrap();
 		self.device.send(self.output.a, self.state.a.into()).unwrap();
@@ -264,6 +221,9 @@ impl Rekt {
 		self.device.send(self.output.ra, self.state.ra.into()).unwrap();
 
 		// stick
+
+		let horizontal = self.state.left || self.state.right;
+		let vertical = self.state.up || self.state.down;
 
 		// angles
 		if horizontal && vertical {
@@ -332,13 +292,13 @@ impl Rekt {
 		if horizontal {
 			// SOCD
 			if self.state.right && self.state.left { self.state.coords.x = 0.0 }
-			// mirror axis
-			if horizontal && !self.state.right { self.state.coords.x = -self.state.coords.x }
+			// mirror
+			if !self.state.right { self.state.coords.x = -self.state.coords.x }
 		}
 		if vertical {
 			// SOCD
 			if self.state.up && self.state.down { self.state.coords.y = 0.0 }
-			// mirror axis
+			// mirror
 			if !self.state.down { self.state.coords.y = -self.state.coords.y }
 		}
 
@@ -347,8 +307,28 @@ impl Rekt {
 		self.device.send(self.output.vertical, coord_values.1).unwrap();
 
 		// c-stick
-		self.device.send(self.output.c_horizontal, self.state.c_horizontal.into()).unwrap();
-		self.device.send(self.output.c_vertical, self.state.c_vertical.into()).unwrap();
+
+		let c_horizontal = self.state.c_left || self.state.c_right;
+		let c_vertical = self.state.c_up || self.state.c_down;
+
+		if c_horizontal {
+			self.state.c_coords.set_x(1.0);
+			// mirror
+			if !self.state.c_right { self.state.c_coords.x = -self.state.c_coords.x }
+		} else {
+			self.state.c_coords.set_x(0.0);
+		}
+		if c_vertical {
+			self.state.c_coords.set_y(1.0);
+			// mirror
+			if !self.state.c_down { self.state.c_coords.y = -self.state.c_coords.y }
+		} else {
+			self.state.c_coords.set_y(0.0);
+		}
+
+		let c_coord_values = self.state.c_coords.to_bytes();
+		self.device.send(self.output.c_horizontal, c_coord_values.0).unwrap();
+		self.device.send(self.output.c_vertical, c_coord_values.1).unwrap();
 
 		// debug
 		if self.state.debug { println!("{:?} => {:?}", self.state.coords, coord_values) }
