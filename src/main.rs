@@ -248,16 +248,13 @@ impl Rekt {
 			} else if self.state.b {
 				// b
 				if self.state.mod_x == self.state.mod_y {
-					self.state.coords.x = 0.59;
-					self.state.coords.y = 0.81;
+					self.state.coords.set(0.59, 0.81);
 				}
 			} else if self.state.mod_x != self.state.mod_y {
 				if self.state.mod_x {
-					self.state.coords.x = 0.7375;
-					self.state.coords.y = 0.3125;
+					self.state.coords.set(0.7375, 0.3125);
 				} else {
-					self.state.coords.x = 0.3125;
-					self.state.coords.y = 0.7375;
+					self.state.coords.set(0.3125, 0.7375);
 				}
 			} else {
 				self.state.coords.set_deg(45.0, None);
@@ -286,13 +283,13 @@ impl Rekt {
 			// SOCD
 			if self.state.right && self.state.left { self.state.coords.set_x(0.0) }
 			// mirror
-			if !self.state.right { self.state.coords.x = -self.state.coords.x }
+			if !self.state.right { self.state.coords.set_x(-self.state.coords.x) }
 		}
 		if vertical {
 			// SOCD
 			if self.state.up && self.state.down { self.state.coords.set_y(0.0) }
 			// mirror
-			if !self.state.down { self.state.coords.y = -self.state.coords.y }
+			if !self.state.down { self.state.coords.set_y(-self.state.coords.y) }
 		}
 
 		let coord_values = self.state.coords.to_bytes();
@@ -307,14 +304,14 @@ impl Rekt {
 		if c_horizontal {
 			self.state.c_coords.set_x(1.0);
 			// mirror
-			if !self.state.c_right { self.state.c_coords.x = -self.state.c_coords.x }
+			if !self.state.c_right { self.state.c_coords.set_x(-self.state.c_coords.x) }
 		} else {
 			self.state.c_coords.set_x(0.0);
 		}
 		if c_vertical {
 			self.state.c_coords.set_y(1.0);
 			// mirror
-			if !self.state.c_down { self.state.c_coords.y = -self.state.c_coords.y }
+			if !self.state.c_down { self.state.c_coords.set_y(-self.state.c_coords.y) }
 		} else {
 			self.state.c_coords.set_y(0.0);
 		}

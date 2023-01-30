@@ -91,8 +91,7 @@ impl Coords {
 	pub fn set_vec(&mut self, angle: f64, length: Option<f64>) {
 		let len = length.unwrap_or(1.0);
 		let sincos = angle.sin_cos();
-		self.x = sincos.1 * len;
-		self.y = sincos.0 * len;
+		self.set(sincos.1 * len, sincos.0 * len);
 	}
 
 	pub fn set_deg(&mut self, degrees: f64, length: Option<f64>) {
