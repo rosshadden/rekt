@@ -4,7 +4,7 @@ description: TODO list for rekt
 authors: ross
 categories: melee controller gamepad
 created: 2023-01-22
-updated: 2023-01-30
+updated: 2023-01-31
 version: 0.1.0
 @end
 
@@ -32,10 +32,12 @@ version: 0.1.0
   - ( ) b tilts
   - ( ) angled tilts
   - ( ) angled smashes
-  - ( ) shield tilts
-  - ( ) shield drop down
-  - ( ) dbooc
+  - (x) shield tilts
   - (x) reliable teeter
   - ( ) empty pivots
   - ( ) moonwalk
   - ( ) sticky walk
+
+* bugs
+
+  - ( ) fix problem with non-tilt values on diagonal inputs being forced despite mod keys

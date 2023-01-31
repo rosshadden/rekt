@@ -233,7 +233,7 @@ impl Rekt {
 			if self.state.l || self.state.r {
 				// shield
 				if self.state.mod_x == self.state.mod_y {
-					// shield drops
+					// shield drop
 					if self.state.down {
 						self.state.coords.set(0.725, 0.675);
 					} else {
@@ -262,7 +262,7 @@ impl Rekt {
 			if self.state.mod_x == self.state.mod_y {
 				self.state.coords.set_deg(0.0, None);
 			} else if self.state.mod_x {
-				self.state.coords.set_deg(0.0, Some(0.49));
+				self.state.coords.set_deg(0.0, Some(0.425));
 			} else {
 				self.state.coords.set_deg(0.0, Some(0.215));
 			}
@@ -272,7 +272,12 @@ impl Rekt {
 			} else if self.state.mod_x {
 				self.state.coords.set_deg(90.0, Some(0.4));
 			} else {
-				self.state.coords.set_deg(90.0, Some(0.4525));
+				// shield drop
+				if self.state.down && (self.state.l || self.state.r) {
+					self.state.coords.set_deg(90.0, Some(0.425));
+				} else {
+					self.state.coords.set_deg(90.0, Some(0.4525));
+				}
 			}
 		} else {
 			self.state.coords.set(0.0, 0.0);
