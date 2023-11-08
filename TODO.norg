@@ -41,3 +41,4 @@ version: 0.1.0
 * bugs
 
   - ( ) fix problem with non-tilt values on diagonal inputs being forced despite mod keys
+  - ( ) fix mx wavedash turning around

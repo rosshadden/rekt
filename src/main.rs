@@ -240,8 +240,10 @@ impl Rekt {
 						self.state.coords.set_deg(45.0, None);
 					}
 				} else if self.state.mod_x {
+					// wavedash long
 					self.state.coords.set_deg(17.0, None);
 				} else if self.state.mod_y {
+					// wavedash short
 					// self.state.coords.set(0.5, 0.85);
 					self.state.coords.set_deg(73.0, None);
 				}
